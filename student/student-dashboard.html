@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - HMP</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <style>
+        .student-nav {
+            background-color: #161b22;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #30363d;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-right {
+            margin-left: auto;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: #c9d1d9;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .nav-button:hover {
+            background-color: #21262d;
+        }
+
+        .nav-button.active {
+            background-color: #21262d;
+            font-weight: 600;
+        }
+
+        .dashboard-content {
+            margin-top: 80px;
+            padding: 2rem;
+        }
+
+        .courses-overview {
+            margin-top: 2rem;
+            padding: 1rem;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .course-card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .course-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .course-header {
+            margin-bottom: 1rem;
+        }
+
+        .course-title {
+            color: #c9d1d9;
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .course-description {
+            color: #8b949e;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .course-stats {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 1px solid #30363d;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            color: #c9d1d9;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .stat-label {
+            color: #8b949e;
+            font-size: 0.8rem;
+        }
+
+        .join-course-btn {
+            background-color: #238636;
+            color: #ffffff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .join-course-btn:hover {
+            background-color: #2ea043;
+            transform: scale(1.02);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #0d1117;
+            margin: 15% auto;
+            padding: 2rem;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .close-modal {
+            color: #8b949e;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #c9d1d9;
+        }
+
+        .form-group input {
+            width: 90%;
+            padding: 0.5rem;
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .courses-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .courses-header h2 {
+            margin: 0;
+            color: #c9d1d9;
+        }
+
+        .join-course-btn {
+            background-color: #238636;
+            color: #ffffff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .join-course-btn:hover {
+            background-color: #2ea043;
+            transform: scale(1.02);
+        }
+
+        .welcome-text {
+            color: #8b949e;
+            font-size: 1.1rem;
+            margin-top: -0.5rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="student-nav">
+        <div class="nav-left">
+            <button class="nav-button active" onclick="switchView('dashboard')">Dashboard</button>
+            <button class="nav-button" onclick="switchView('assignments')">Assignments</button>
+            <button class="nav-button" onclick="window.location.href='../forum/forum.html'">Forum</button>
+        </div>
+        <div class="nav-right">
+            <button class="nav-button" onclick="window.location.href='student-account.html'">Account</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-content">
+        <div id="dashboardView">
+            <h1>Student Dashboard</h1>
+            <p class="welcome-text">Welcome, <span id="studentName">Student</span></p>
+            <div class="courses-overview">
+                <div class="courses-header">
+                    <h2>Your Courses</h2>
+                    <button class="join-course-btn" onclick="openJoinModal()">Join Course</button>
+                </div>
+                <div id="coursesList" class="courses-grid">
+                    <!-- Courses will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+        <div id="assignmentsView" style="display: none;">
+            <h1>Assignments</h1>
+            <div id="assignmentsList">
+                <!-- Assignments will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <div id="joinCourseModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('joinCourseModal')">&times;</span>
+            <h2>Join Course</h2>
+            <form id="joinCourseForm" onsubmit="joinCourse(event)">
+                <div class="form-group">
+                    <label for="courseCode">Enter Course Code</label>
+                    <input type="text" id="courseCode" required>
+                </div>
+                <button type="submit" class="join-course-btn">Join Course</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="student.js"></script>
+</body>
+</html>

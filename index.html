@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HMP - Home</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-left">
+            <button class="nav-button active">Home</button>
+            <button class="nav-button" onclick="window.location.href='about.html'">About Us</button>
+        </div>
+        <div class="nav-right">
+            <button class="get-started-button" onclick="window.location.href='login-signup.html'">Get Started →</button>
+        </div>
+    </nav>
+
+    <div class="content">
+        <section class="hero-section">
+            <h1 class="hero-title">Welcome to HMP</h1>
+            <p class="hero-subtitle">Streamline your educational workflow with our comprehensive student management system</p>
+            <div class="cta-buttons">
+                <button class="get-started-button" onclick="window.location.href='login-signup.html'">Get Started →</button>
+                <button class="nav-button" onclick="window.location.href='about.html'">Learn More</button>
+            </div>
+        </section>
+
+        <section class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📚</div>
+                <h3 class="feature-title">Course Management</h3>
+                <p class="feature-description">Create and manage courses effortlessly. Organize your educational content with ease.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title">Progress Tracking</h3>
+                <p class="feature-description">Monitor student progress and performance with detailed analytics and insights.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">✏️</div>
+                <h3 class="feature-title">Assignment Tools</h3>
+                <p class="feature-description">Create, distribute, and grade assignments all in one place.</p>
+            </div>
+        </section>
+
+        <section class="testimonials">
+            <h2>What Our Users Say</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"HMP has transformed how I manage my courses. It's intuitive and saves me hours each week."</p>
+                    <p class="testimonial-author">- Sarah Johnson, Mathematics Teacher -</p>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"As a student, I love how easy it is to access all my course materials and assignments in one place."</p>
+                    <p class="testimonial-author">- Michael Chen, Student -</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <section class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-grid">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h3>How do I get started with HMP?</h3>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Getting started with HMP is simple:<br>
+                    1. Click the "Get Started" button<br>
+                    2. Choose your role (Teacher or Student)<br>
+                    3. Create your account with basic information<br>
+                    4. Teachers can immediately create courses<br>
+                    5. Students can join courses using course codes<br>
+                    Our intuitive interface will guide you through each step!</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h3>Is HMP free to use?</h3>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes, HMP is completely free! We believe in making education management accessible to everyone. All features are available to both teachers and students without any hidden costs or premium tiers. This includes course creation, assignment management, progress tracking, and all future updates.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h3>How do students join a course?</h3>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Joining a course is a straightforward process:<br>
+                    1. Log in to your student account<br>
+                    2. Click the "Join Course" button on your dashboard<br>
+                    3. Enter the course code provided by your teacher<br>
+                    4. Click "Join"<br>
+                    You'll immediately gain access to all course materials and assignments. The course code is automatically generated when teachers create a new course.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h3>Can I manage multiple courses?</h3>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Absolutely! There's no limit to the number of courses you can manage:<br>
+                    • Teachers can create and manage multiple courses simultaneously<br>
+                    • Students can join as many courses as they need<br>
+                    • Each course has its own dashboard, assignments, and student list<br>
+                    • Easy navigation between different courses<br>
+                    This makes HMP perfect for both teachers with multiple classes and students taking various subjects.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h3>What features are available for teachers?</h3>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Teachers have access to a comprehensive set of tools:<br>
+                    • Course creation and management<br>
+                    • Assignment creation and grading<br>
+                    • Student progress tracking<br>
+                    • Course code generation for student enrollment<br>
+                    • Student list management<br>
+                    • Performance analytics and reporting<br>
+                    All designed to make teaching more efficient and effective.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h3>What can students do on HMP?</h3>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Students have access to various features:<br>
+                    • Join multiple courses using course codes<br>
+                    • View and submit assignments<br>
+                    • Track their progress and grades<br>
+                    • Access course materials<br>
+                    • View upcoming assignments and due dates<br>
+                    • Manage their student profile<br>
+                    Everything needed for an organized and successful learning experience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="theme.js"></script>
+    <script src="home.js"></script>
+</body>
+</html> 

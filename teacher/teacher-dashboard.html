@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - HMP</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <style>
+        .teacher-nav {
+            background-color: #161b22;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #30363d;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-right {
+            margin-left: auto;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: #c9d1d9;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .nav-button:hover {
+            background-color: #21262d;
+        }
+
+        .nav-button.active {
+            background-color: #21262d;
+            font-weight: 600;
+        }
+
+        .dashboard-content {
+            margin-top: 80px;
+            padding: 2rem;
+        }
+
+        .courses-overview {
+            margin-top: 2rem;
+            padding: 1rem;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .course-card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .course-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .course-title {
+            color: #c9d1d9;
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .course-code {
+            background-color: #21262d;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-family: 'IBM Plex Mono', monospace;
+            color: #58a6ff;
+            font-size: 0.9rem;
+        }
+
+        .course-description {
+            color: #8b949e;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .course-stats {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 1px solid #30363d;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            color: #c9d1d9;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .stat-label {
+            color: #8b949e;
+            font-size: 0.8rem;
+        }
+
+        .course-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.8rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .grade-btn {
+            background-color: #238636;
+            color: white;
+        }
+
+        .grade-btn:hover {
+            background-color: #2ea043;
+        }
+
+        .assign-btn {
+            background-color: #1f6feb;
+            color: white;
+        }
+
+        .assign-btn:hover {
+            background-color: #388bfd;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: #161b22;
+            margin: 5vh auto;
+            padding: 2.5rem;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            color: #c9d1d9;
+            margin-bottom: 2rem;
+            font-size: 1.4rem;
+            text-align: center;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            font-size: 1.5rem;
+            color: #8b949e;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-modal:hover {
+            color: #c9d1d9;
+        }
+
+        .modal .action-btn {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .course-code-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #30363d;
+        }
+
+        .course-code {
+            background-color: #21262d;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-family: 'IBM Plex Mono', monospace;
+            color: #58a6ff;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .copy-btn {
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: inline-block;
+            width: 50%;
+            text-align: center;
+        }
+
+        .form-group input[type="file"] {
+            display: none;  /* Hide the default file input */
+        }
+
+        .form-group .file-upload-btn {
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: inline-block;
+            width: 90%;
+            text-align: center;
+        }
+
+        .form-group .file-upload-btn:hover {
+            background-color: #30363d;
+            border-color: #58a6ff;
+            color: #58a6ff;
+        }
+
+        .selected-files {
+            color: #8b949e;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Optional: Add smooth scrolling to the form */
+        #assignmentForm {
+            scroll-behavior: smooth;
+        }
+
+        /* Optional: Style the scrollbar */
+        #assignmentForm::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #assignmentForm::-webkit-scrollbar-track {
+            background: #21262d;
+            border-radius: 4px;
+        }
+
+        #assignmentForm::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 4px;
+        }
+
+        #assignmentForm::-webkit-scrollbar-thumb:hover {
+            background: #40464d;
+        }
+
+        /* Add these new styles */
+        .delete-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+            margin-left: auto;
+        }
+
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .delete-icon {
+            font-size: 1.1rem;
+            color: #f85149;
+        }
+
+        .course-card:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .delete-btn:hover .delete-icon {
+            transform: scale(1.1);
+        }
+
+        .courses-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .delete-all-btn {
+            background-color: #21262d;
+            color: #f85149;
+            border: 1px solid #f85149;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .delete-all-btn:hover {
+            background-color: #f85149;
+            color: #ffffff;
+        }
+
+        /* Add these new styles and update existing ones */
+        .courses-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .courses-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .create-course-btn {
+            background-color: #238636;
+            color: #ffffff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .create-course-btn:hover {
+            background-color: #2ea043;
+            transform: scale(1.02);
+        }
+
+        .delete-all-btn {
+            background-color: #21262d;
+            color: #f85149;
+            border: 1px solid #f85149;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .delete-all-btn:hover {
+            background-color: #ff6b64;
+            transform: scale(1.02);
+        }
+
+        .welcome-text {
+            color: #8b949e;
+            font-size: 1.1rem;
+            margin-top: -0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .student-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: #21262d;
+            border-radius: 6px;
+            margin-bottom: 0.8rem;
+        }
+
+        .student-info {
+            flex: 1;
+        }
+
+        .student-name {
+            color: #c9d1d9;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+
+        .student-stats {
+            color: #8b949e;
+            font-size: 0.9rem;
+        }
+
+        .assignment-progress {
+            display: block;
+            margin-top: 0.3rem;
+        }
+
+        .student-actions {
+            margin-left: 1rem;
+        }
+
+        .remove-student-btn {
+            background-color: #21262d;
+            color: #f85149;
+            border: 1px solid #f85149;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .remove-student-btn:hover {
+            background-color: #f85149;
+            color: #ffffff;
+        }
+
+        #studentsList {
+            max-height: calc(80vh - 100px);
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        #studentsList::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #studentsList::-webkit-scrollbar-track {
+            background: #21262d;
+            border-radius: 4px;
+        }
+
+        #studentsList::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 4px;
+        }
+
+        #studentsList::-webkit-scrollbar-thumb:hover {
+            background: #40464d;
+        }
+
+        #studentsList {
+            scroll-behavior: smooth;
+        }
+
+        #studentsList h3 {
+            position: sticky;
+            top: 0;
+            background-color: #161b22;
+            padding: 1rem 0;
+            margin-top: 0;
+            z-index: 1;
+        }
+
+        .delete-all-students-btn {
+            width: 100%;
+            background-color: #21262d;
+            color: #f85149;
+            border: 1px solid #f85149;
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            margin-top: 1.5rem;
+        }
+
+        .delete-all-students-btn:hover {
+            background-color: #f85149;
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .delete-all-students-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <nav class="teacher-nav">
+        <div class="nav-left">
+            <button class="nav-button active" onclick="switchView('dashboard')">Dashboard</button>
+            <button class="nav-button" onclick="window.location.href='teacher-assignments.html'">Assignments</button>
+            <button class="nav-button" onclick="window.location.href='../forum/forum.html'">Forum</button>
+        </div>
+        <div class="nav-right">
+            <button class="nav-button" onclick="window.location.href='teacher-account.html'">Account</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-content">
+        <div id="dashboardView">
+            <h1>Teacher Dashboard</h1>
+            <p class="welcome-text">Welcome, <span id="teacherName">Teacher</span></p>
+            <div class="courses-overview">
+                <div class="courses-header">
+                    <h2>Your Courses</h2>
+                    <div class="courses-actions">
+                        <button class="create-course-btn" onclick="window.location.href='create-courses.html'">Create Course</button>
+                        <button class="delete-all-btn" onclick="confirmDeleteAllCourses()">Delete All Courses</button>
+                    </div>
+                </div>
+                <div id="coursesList" class="courses-grid">
+                    <!-- Courses will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+        <div id="coursesView" style="display: none;">
+            <h1>Create Courses</h1>
+            <!-- Add course creation content here -->
+        </div>
+        <div id="accountView" style="display: none;">
+            <h1>Account Settings</h1>
+            <!-- Add account settings content here -->
+        </div>
+    </div>
+
+    <div id="assignmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('assignmentModal')">&times;</span>
+            <h2>Course Assignments</h2>
+            <p style="color: #8b949e; text-align: center; margin-bottom: 1.5rem;">
+                View and manage all assignments for this course
+            </p>
+            <button 
+                onclick="viewCourseAssignments()" 
+                class="action-btn assign-btn"
+                style="width: 100%;">
+                View Assignments
+            </button>
+        </div>
+    </div>
+
+    <div id="gradeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('gradeModal')">&times;</span>
+            <h2>View Students</h2>
+            <div id="studentsList">
+                <!-- Student list will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="teacher.js"></script>
+</body>
+</html>

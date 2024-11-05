@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post - HMP Forum</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;...&display=swap" rel="stylesheet">
+    <style>
+        .post-container {
+            max-width: 1000px;
+            margin: 80px auto 0;
+            padding: 2rem;
+        }
+
+        .comments-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #30363d;
+        }
+
+        .comments-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .comment-card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .comment-form {
+            margin-bottom: 2rem;
+        }
+
+        .comment-form textarea {
+            width: 100%;
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            font-family: 'IBM Plex Mono', monospace;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .submit-comment-btn {
+            background-color: #238636;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .no-comments {
+            text-align: center;
+            color: #8b949e;
+            padding: 2rem;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .delete-comment-btn {
+            background-color: #da3633;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.8rem;
+            transition: background-color 0.2s;
+        }
+
+        .delete-comment-btn:hover {
+            background-color: #f85149;
+        }
+
+        .comment-card {
+            position: relative;
+        }
+
+        .comment-header {
+            margin-bottom: 0.5rem;
+        }
+
+        .user-tag {
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: white;
+            display: inline-block;
+            margin: 0 0.5rem;
+        }
+
+        .tag-owner { 
+            background-color: #333333;
+            border: 1px solid #444444;
+        }
+        
+        .tag-admin { 
+            background-color: #da3633;
+            border: 1px solid #f85149;
+        }
+        
+        .tag-teacher { 
+            background-color: #1f6feb;
+            border: 1px solid #388bfd;
+        }
+        
+        .tag-student { 
+            background-color: #238636;
+            border: 1px solid #2ea043;
+        }
+
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .post-author {
+            color: #58a6ff;
+            font-weight: 500;
+        }
+
+        .post-timestamp {
+            color: #8b949e;
+            font-size: 0.8rem;
+        }
+
+        .forum-nav {
+            background-color: #161b22;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #30363d;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            background-color: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-button:hover {
+            background-color: #30363d;
+            border-color: #8b949e;
+            transform: translateY(-1px);
+        }
+
+        .nav-button:active {
+            transform: translateY(0);
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .post-container {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <nav class="forum-nav">
+        <div class="nav-left">
+            <button class="nav-button" onclick="window.location.href='forum.html'">
+                ← Back to Forum
+            </button>
+        </div>
+    </nav>
+
+    <div class="post-container">
+        <div id="postContent">
+            <!-- Post content will be loaded here -->
+        </div>
+
+        <div class="comments-section">
+            <div class="comments-header">
+                <h2>Comments</h2>
+                <span id="commentsCount">(0)</span>
+            </div>
+
+            <form id="commentForm" class="comment-form" onsubmit="addComment(event)">
+                <textarea 
+                    id="commentText" 
+                    placeholder="Write your comment..." 
+                    required
+                ></textarea>
+                <button type="submit" class="submit-comment-btn">Add Comment</button>
+            </form>
+
+            <div id="commentsList">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="post.js"></script>
+</body>
+</html>
