@@ -10,6 +10,47 @@ function checkOwnerAuth() {
     }
 }
 
+function validateUsername(username) {
+    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+    return {
+        isValid: usernameRegex.test(username),
+        message: 'Username must be 3-20 characters long and contain only letters, numbers, and underscores'
+    };
+}
+
+function validatePassword(password) {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    
+    return {
+        isValid: password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar,
+        message: 'Password must be at least 8 characters long and contain uppercase, lowercase, numbers, and special characters'
+    };
+}
+
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return {
+        isValid: emailRegex.test(email),
+        message: 'Please enter a valid email address'
+    };
+}
+
+function showError(message) {
+    const errorDiv = document.getElementById('errorMessage');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+}
+
+function clearErrors() {
+    const errorDiv = document.getElementById('errorMessage');
+    errorDiv.textContent = '';
+    errorDiv.style.display = 'none';
+}
+
 async function handleAddModerator(e) {
     e.preventDefault();
     
@@ -17,10 +58,34 @@ async function handleAddModerator(e) {
     const password = document.getElementById('modPassword').value;
     const email = document.getElementById('modEmail').value;
 
+    // Clear previous errors
+    clearErrors();
+
+    // Validate username
+    const usernameValidation = validateUsername(username);
+    if (!usernameValidation.isValid) {
+        showError(usernameValidation.message);
+        return;
+    }
+
+    // Validate password
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+        showError(passwordValidation.message);
+        return;
+    }
+
+    // Validate email
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+        showError(emailValidation.message);
+        return;
+    }
+
     const users = JSON.parse(localStorage.getItem('users')) || [];
     
     if (users.some(user => user.username === username)) {
-        alert('Username already exists!');
+        showError('Username already exists!');
         return;
     }
 
