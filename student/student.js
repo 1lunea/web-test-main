@@ -1,9 +1,14 @@
 // Check if user is logged in and is a student
 window.onload = function() {
     checkStudentAuth();
-    loadCourses();
-    loadAssignments();
-    loadStudentName();
+    if (window.location.pathname.includes('student-dashboard.html')) {
+        loadCourses();
+        loadStudentName();
+    } else if (window.location.pathname.includes('student-assignments.html')) {
+        loadCourseFilter();
+        filterAssignments();
+        loadStudentName();
+    }
 };
 
 function checkStudentAuth() {
@@ -141,61 +146,6 @@ function loadAssignments() {
             hasAssignments = true;
             const courseSection = document.createElement('div');
             courseSection.className = 'course-section';
-            courseSection.innerHTML = `
-                <h3>${course.name}</h3>
-                <div class="assignments-grid">
-                    ${course.assignments.map(assignment => `
-                        <div class="assignment-card">
-                            <h4>${assignment.name}</h4>
-                            <p>${assignment.description}</p>
-                            <div class="assignment-date">
-                                Posted: ${new Date(assignment.dateCreated).toLocaleDateString()}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            assignmentsList.appendChild(courseSection);
-        }
-    });
-
-    if (!hasAssignments) {
-        assignmentsList.innerHTML = '<p style="color: #8b949e; text-align: center;">No assignments available.</p>';
-    }
-}
-
-function loadStudentName() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    const student = users.find(user => user.id === currentUser.id);
-    
-    const studentNameSpan = document.getElementById('studentName');
-    studentNameSpan.textContent = student.profile?.fullName || currentUser.username;
-}
-
-// Add event listener for clicking outside modals
-window.onclick = function(event) {
-    const modals = document.getElementsByClassName('modal');
-    for (let modal of modals) {
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    }
-}
-function loadAssignments() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const courses = JSON.parse(localStorage.getItem('courses')) || [];
-    const studentCourses = courses.filter(course => 
-        course.students?.some(student => student.id === currentUser.id)
-    );
-    
-    const assignmentsList = document.getElementById('assignmentsList');
-    assignmentsList.innerHTML = '';
-
-    studentCourses.forEach(course => {
-        if (course.assignments && course.assignments.length > 0) {
-            const courseSection = document.createElement('div');
-            courseSection.className = 'course-section';
             courseSection.innerHTML = `<h3>${course.name}</h3>`;
             
             const assignmentsGrid = document.createElement('div');
@@ -229,6 +179,29 @@ function loadAssignments() {
             assignmentsList.appendChild(courseSection);
         }
     });
+
+    if (!hasAssignments) {
+        assignmentsList.innerHTML = '<p style="color: #8b949e; text-align: center;">No assignments available.</p>';
+    }
+}
+
+function loadStudentName() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const student = users.find(user => user.id === currentUser.id);
+    
+    const studentNameSpan = document.getElementById('studentName');
+    studentNameSpan.textContent = student.profile?.fullName || currentUser.username;
+}
+
+// Add event listener for clicking outside modals
+window.onclick = function(event) {
+    const modals = document.getElementsByClassName('modal');
+    for (let modal of modals) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    }
 }
 
 function openSubmissionModal(courseId, assignmentId) {
@@ -281,3 +254,90 @@ document.getElementById('submissionFile')?.addEventListener('change', function(e
     const fileName = e.target.files[0]?.name || 'No file selected';
     document.getElementById('selectedFile').textContent = fileName;
 });
+
+function loadCourseFilter() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const courses = JSON.parse(localStorage.getItem('courses')) || [];
+    const studentCourses = courses.filter(course => 
+        course.students?.some(student => student.id === currentUser.id)
+    );
+    
+    const courseFilter = document.getElementById('courseFilter');
+    
+    // Clear existing options except "All Courses"
+    courseFilter.innerHTML = '<option value="all">All Courses</option>';
+    
+    // Add course options
+    studentCourses.forEach(course => {
+        const option = document.createElement('option');
+        option.value = course.id;
+        option.textContent = course.name;
+        courseFilter.appendChild(option);
+    });
+}
+
+function filterAssignments() {
+    const selectedCourseId = document.getElementById('courseFilter').value;
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const courses = JSON.parse(localStorage.getItem('courses')) || [];
+    let filteredCourses;
+    
+    if (selectedCourseId === 'all') {
+        filteredCourses = courses.filter(course => 
+            course.students?.some(student => student.id === currentUser.id)
+        );
+    } else {
+        filteredCourses = courses.filter(course => 
+            course.id === selectedCourseId && 
+            course.students?.some(student => student.id === currentUser.id)
+        );
+    }
+    
+    const assignmentsList = document.getElementById('assignmentsList');
+    assignmentsList.innerHTML = '';
+
+    let hasAssignments = false;
+
+    filteredCourses.forEach(course => {
+        if (course.assignments && course.assignments.length > 0) {
+            hasAssignments = true;
+            const courseSection = document.createElement('div');
+            courseSection.className = 'course-section';
+            courseSection.innerHTML = `<h3>${course.name}</h3>`;
+            
+            const assignmentsGrid = document.createElement('div');
+            assignmentsGrid.className = 'assignments-grid';
+
+            course.assignments.forEach(assignment => {
+                const isSubmitted = assignment.submissions?.[currentUser.id];
+                const statusClass = isSubmitted ? 'status-submitted' : 'status-pending';
+                const statusText = isSubmitted ? 'Submitted' : 'Pending';
+                
+                const assignmentCard = document.createElement('div');
+                assignmentCard.className = 'assignment-card';
+                assignmentCard.innerHTML = `
+                    <h4>${assignment.name}</h4>
+                    <p>${assignment.description}</p>
+                    <div class="assignment-date">
+                        Posted: ${new Date(assignment.dateCreated).toLocaleDateString()}
+                    </div>
+                    <span class="assignment-status ${statusClass}">${statusText}</span>
+                    ${!isSubmitted ? `
+                        <button class="submit-btn" 
+                                onclick="openSubmissionModal('${course.id}', '${assignment.id}')">
+                            Submit Assignment
+                        </button>
+                    ` : ''}
+                `;
+                assignmentsGrid.appendChild(assignmentCard);
+            });
+
+            courseSection.appendChild(assignmentsGrid);
+            assignmentsList.appendChild(courseSection);
+        }
+    });
+
+    if (!hasAssignments) {
+        assignmentsList.innerHTML = '<p style="color: #8b949e; text-align: center;">No assignments available.</p>';
+    }
+}
