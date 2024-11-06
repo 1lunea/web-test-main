@@ -221,6 +221,47 @@
             margin-top: -0.5rem;
             margin-bottom: 1.5rem;
         }
+
+        .course-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #30363d;
+        }
+
+        .view-assignments-btn,
+        .leave-course-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .view-assignments-btn {
+            background-color: #238636;
+            color: white;
+        }
+
+        .view-assignments-btn:hover {
+            background-color: #2ea043;
+            transform: translateY(-2px);
+        }
+
+        .leave-course-btn {
+            background-color: #21262d;
+            color: #f85149;
+            border: 1px solid #f85149;
+        }
+
+        .leave-course-btn:hover {
+            background-color: rgba(248, 81, 73, 0.1);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>

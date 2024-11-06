@@ -76,9 +76,36 @@ function createCourseCard(course) {
                 <div class="stat-label">Students</div>
             </div>
         </div>
+        <div class="course-actions">
+            <button class="view-assignments-btn" onclick="window.location.href='student-assignments.html'">
+                View Assignments
+            </button>
+            <button class="leave-course-btn" onclick="leaveCourse('${course.id}')">
+                Leave Course
+            </button>
+        </div>
     `;
     
     return card;
+}
+
+function leaveCourse(courseId) {
+    if (!confirm('Are you sure you want to leave this course?')) {
+        return;
+    }
+
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const courses = JSON.parse(localStorage.getItem('courses')) || [];
+    
+    const courseIndex = courses.findIndex(c => c.id === courseId);
+    if (courseIndex !== -1) {
+        courses[courseIndex].students = courses[courseIndex].students.filter(
+            student => student.id !== currentUser.id
+        );
+        
+        localStorage.setItem('courses', JSON.stringify(courses));
+        loadCourses(); // Refresh the courses list
+    }
 }
 
 function openJoinModal() {
