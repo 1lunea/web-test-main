@@ -29,6 +29,7 @@ function loadUsers() {
     }
     
     displayUsers(users);
+    updateStats();
 }
 
 function deleteAllUsers() {
@@ -164,4 +165,14 @@ function checkAdminAuth() {
     if (!currentUser || currentUser.username !== 'adminquang') {
         window.location.href = '../login-signup.html';
     }
+}
+
+function updateStats() {
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    
+    document.getElementById('totalUsers').textContent = users.length;
+    document.getElementById('totalStudents').textContent = 
+        users.filter(user => user.role === 'student').length;
+    document.getElementById('totalTeachers').textContent = 
+        users.filter(user => user.role === 'teacher').length;
 }

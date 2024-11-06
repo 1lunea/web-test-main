@@ -1,6 +1,6 @@
 window.onload = function() {
     checkOwnerAuth();
-    document.getElementById('addAdminForm').addEventListener('submit', handleAddAdmin);
+    document.getElementById('addModForm').addEventListener('submit', handleAddModerator);
 };
 
 function checkOwnerAuth() {
@@ -10,12 +10,12 @@ function checkOwnerAuth() {
     }
 }
 
-async function handleAddAdmin(e) {
+async function handleAddModerator(e) {
     e.preventDefault();
     
-    const username = document.getElementById('adminUsername').value;
-    const password = document.getElementById('adminPassword').value;
-    const email = document.getElementById('adminEmail').value;
+    const username = document.getElementById('modUsername').value;
+    const password = document.getElementById('modPassword').value;
+    const email = document.getElementById('modEmail').value;
 
     const users = JSON.parse(localStorage.getItem('users')) || [];
     
@@ -24,20 +24,21 @@ async function handleAddAdmin(e) {
         return;
     }
 
-    const newAdmin = {
-        id: 'admin_' + Date.now(),
+    const newModerator = {
+        id: 'mod_' + Date.now(),
         username: username,
         password: password,
-        role: 'admin',
+        role: 'moderator',
         profile: {
-            id: 'ADMIN' + Date.now(),
+            id: 'MOD' + Date.now(),
             fullName: username,
-            email: email
+            email: email,
+            permissions: ['delete_posts', 'ban_users', 'moderate_comments']
         }
     };
 
-    users.push(newAdmin);
+    users.push(newModerator);
     localStorage.setItem('users', JSON.stringify(users));
-    alert('Admin account created successfully!');
+    alert('Moderator account created successfully!');
     window.location.href = 'admin-panel.html';
 } 

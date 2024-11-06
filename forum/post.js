@@ -73,7 +73,9 @@ function loadComments(post) {
             commentCard.className = 'comment-card';
             
             const userTagInfo = getUserTag(comment.author);
-            const deleteButton = comment.author.username === currentUser.username ? 
+            
+            const canDelete = isAdmin() || comment.author.username === currentUser.username;
+            const deleteButton = canDelete ? 
                 `<button class="delete-comment-btn" onclick="deleteComment('${comment.id}')">
                     Delete
                 </button>` : '';
@@ -108,17 +110,18 @@ function deleteComment(commentId) {
         const posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
         const postIndex = posts.findIndex(p => p.id === postId);
         
-        if (postIndex !== -1) {
-            // Filter out the comment with the matching ID
-            posts[postIndex].comments = posts[postIndex].comments.filter(
-                comment => comment.id !== commentId
-            );
+        if (postIndex !== -1 && posts[postIndex].comments) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const comment = posts[postIndex].comments.find(c => c.id === commentId);
             
-            // Save the updated posts
-            localStorage.setItem('forumPosts', JSON.stringify(posts));
-            
-            // Reload the post to show the changes
-            loadPost();
+            if (isAdmin() || comment.author.username === currentUser.username) {
+                posts[postIndex].comments = posts[postIndex].comments.filter(
+                    comment => comment.id !== commentId
+                );
+                
+                localStorage.setItem('forumPosts', JSON.stringify(posts));
+                loadPost();
+            }
         }
     }
 }
@@ -186,4 +189,9 @@ function getUserTag(user) {
                 color: '#333333'
             };
     }
-} 
+}
+
+function isAdmin() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    return currentUser && currentUser.username === 'adminquang';
+}

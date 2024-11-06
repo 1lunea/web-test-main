@@ -299,6 +299,29 @@
             max-height: 90vh;
             overflow-y: auto;
         }
+
+        .mod-delete-btn {
+            background-color: #da3633;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+            opacity: 0.7;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .mod-delete-btn:hover {
+            opacity: 1;
+            background-color: #f85149;
+        }
+
+        /* Ensure the delete button doesn't trigger the post click event */
+        .mod-delete-btn:focus {
+            outline: none;
+        }
     </style>
 </head>
 <body>
