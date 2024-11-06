@@ -14,10 +14,32 @@
     <div class="container">
         <div id="signup" class="form">
           <h2>Sign Up</h2>
-          <input type="text" id="signupUsername" placeholder="Username">
-          <input type="password" id="signupPassword" placeholder="Password">
+          <div id="errorMessage" class="error-message"></div>
+          <div class="input-group">
+              <input type="text" id="signupUsername" placeholder="Username">
+              <div class="requirements">
+                  Username requirements:
+                  <ul>
+                      <li>3-20 characters long</li>
+                      <li>Letters, numbers, and underscores only</li>
+                  </ul>
+              </div>
+          </div>
+          <div class="input-group">
+              <input type="password" id="signupPassword" placeholder="Password">
+              <div class="requirements">
+                  Password requirements:
+                  <ul>
+                      <li>At least 8 characters long</li>
+                      <li>At least one uppercase letter</li>
+                      <li>At least one lowercase letter</li>
+                      <li>At least one number</li>
+                      <li>At least one special character (!@#$%^&*)</li>
+                  </ul>
+              </div>
+          </div>
           <input type="password" id="signupConfirmPassword" placeholder="Confirm Password">
-          <button id="signupButton">Signup</button>
+          <button id="signupButton">Sign Up</button>
           <p class="switch">Already have an account? <a class="switchButton" id="switchToLogin">Login</a></p>
         </div>
 

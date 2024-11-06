@@ -526,3 +526,57 @@ input[type="password"] {
     display: block;
 }
 
+.input-group {
+    position: relative;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.requirements {
+    display: none;
+    position: absolute;
+    background-color: #21262d;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 0.9em;
+    color: #8b949e;
+    width: 250px;
+    left: 105%;
+    top: 0;
+    z-index: 1000;
+}
+
+.input-group:hover .requirements {
+    display: block;
+}
+
+.requirements ul {
+    margin: 5px 0 0 0;
+    padding-left: 20px;
+}
+
+.requirements li {
+    margin-bottom: 3px;
+}
+
+.error-message {
+    display: none;
+    color: #f85149;
+    background-color: rgba(248, 81, 73, 0.1);
+    border: 1px solid #f85149;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+}
+
+input:focus {
+    border-color: #58a6ff;
+    outline: none;
+}
+
+input.error {
+    border-color: #f85149;
+}
+

@@ -69,40 +69,101 @@ function saveUsers(users) {
   return true;
 }
 
+// Add these validation functions
+function validateUsername(username) {
+    // Username requirements: 3-20 characters, letters, numbers, underscores only
+    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+    return {
+        isValid: usernameRegex.test(username),
+        message: 'Username must be 3-20 characters long and contain only letters, numbers, and underscores'
+    };
+}
+
+function validatePassword(password) {
+    // Password requirements
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    
+    const isValid = password.length >= minLength && 
+                   hasUpperCase && 
+                   hasLowerCase && 
+                   hasNumbers && 
+                   hasSpecialChar;
+
+    return {
+        isValid: isValid,
+        message: 'Password must be at least 8 characters long and contain uppercase, lowercase, numbers, and special characters'
+    };
+}
+
+// Update the handleSignup function
 async function handleSignup(e) {
-  e.preventDefault();
-  const username = document.getElementById('signupUsername').value;
-  const password = document.getElementById('signupPassword').value;
-  const confirmPassword = document.getElementById('signupConfirmPassword').value;
+    e.preventDefault();
+    const username = document.getElementById('signupUsername').value;
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = document.getElementById('signupConfirmPassword').value;
 
-  if (!username || !password || !confirmPassword) {
-    alert('Please fill in all fields');
-    return;
-  }
+    // Clear previous error messages
+    clearErrors();
 
-  if (password !== confirmPassword) {
-    alert('Passwords do not match!');
-    return;
-  }
+    if (!username || !password || !confirmPassword) {
+        showError('Please fill in all fields');
+        return;
+    }
 
-  const users = loadUsers();
-  if (users.some(user => user.username === username)) {
-    alert('Username already exists!');
-    return;
-  }
+    // Validate username
+    const usernameValidation = validateUsername(username);
+    if (!usernameValidation.isValid) {
+        showError(usernameValidation.message);
+        return;
+    }
 
-  const newUser = {
-    username,
-    password,
-    id: Date.now().toString(),
-    profile: null,
-    role: null
-  };
+    // Validate password
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+        showError(passwordValidation.message);
+        return;
+    }
 
-  users.push(newUser);
-  saveUsers(users);
-  alert('Signup successful! Please login.');
-  switchForms(document.getElementById('signup'), document.getElementById('login'));
+    if (password !== confirmPassword) {
+        showError('Passwords do not match!');
+        return;
+    }
+
+    const users = loadUsers();
+    if (users.some(user => user.username === username)) {
+        showError('Username already exists!');
+        return;
+    }
+
+    const newUser = {
+        username,
+        password,
+        id: Date.now().toString(),
+        profile: null,
+        role: null
+    };
+
+    users.push(newUser);
+    saveUsers(users);
+    alert('Signup successful! Please login.');
+    switchForms(document.getElementById('signup'), document.getElementById('login'));
+}
+
+// Add these helper functions for error display
+function showError(message) {
+    const errorDiv = document.getElementById('errorMessage');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+}
+
+function clearErrors() {
+    const errorDiv = document.getElementById('errorMessage');
+    errorDiv.textContent = '';
+    errorDiv.style.display = 'none';
 }
 
 async function handleLogin(e) {
