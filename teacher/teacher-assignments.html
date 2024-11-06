@@ -3,307 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assignments - HMP</title>
+    <title>Teacher Assignments - HMP</title>
     <link rel="stylesheet" href="../styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
     <style>
-        .assignments-container {
-            margin-top: 80px;
-            padding: 2rem;
-        }
-
-        .assignments-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .assignment-card {
-            width: 100%;
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            padding: 1.5rem;
-            transition: transform 0.2s;
-        }
-
-        .assignment-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .assignment-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-            gap: 1rem;
-        }
-
-        .assignment-info {
-            flex: 1;
-        }
-
-        .assignment-title {
-            color: #c9d1d9;
-            margin: 0;
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .assignment-date {
-            color: #8b949e;
-            font-size: 0.9rem;
-        }
-
-        .assignment-description {
-            color: #8b949e;
-            margin: 1rem 0;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .assignment-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .action-btn {
-            padding: 0.8rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            border: none;
-            white-space: nowrap;
-        }
-
-        .grade-btn {
-            background-color: #1f6feb;
-            color: white;
-            align-self: center;
-        }
-
-        .grade-btn:hover {
-            background-color: #388bfd;
-            transform: translateY(-1px);
-        }
-
-        .delete-btn {
-            background: none;
-            border: none;
-            padding: 0.4rem;
-            cursor: pointer;
-            opacity: 0.6;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-        }
-
-        .delete-btn:hover {
-            opacity: 1;
-            background-color: #21262d;
-        }
-
-        .delete-icon {
-            font-size: 1.1rem;
-            color: #f85149;
-        }
-
-        .assignment-card:hover .delete-btn {
-            opacity: 1;
-        }
-
-        .delete-btn:hover .delete-icon {
-            transform: scale(1.1);
-        }
-
-        .assignment-stats {
-            display: flex;
-            gap: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid #30363d;
-            margin-top: 1rem;
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .stat-value {
-            color: #c9d1d9;
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-
-        .stat-label {
-            color: #8b949e;
-            font-size: 0.9rem;
-        }
-
-        .course-filter {
-            margin-bottom: 1rem;
-            padding: 0.8rem;
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #c9d1d9;
-            font-family: 'IBM Plex Mono', monospace;
-            width: 30%;
-
-        }
-
-        .course-filter option {
-            background-color: #161b22;
-            color: #c9d1d9;
-        }
-
-        .no-assignments {
-            color: #8b949e;
-            text-align: center;
-            margin-top: 2rem;
-            font-size: 1.1rem;
-        }
-
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            padding: 20px;
-            box-sizing: border-box;
-            overflow-y: auto;
-        }
-
-        .modal-content {
-            background-color: #161b22;
-            margin: 5% auto;
-            padding: 2rem;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
-            position: relative;
-        }
-
-        .modal-header {
-            padding: 0.8rem 1.2rem;
-            border-bottom: 1px solid #30363d;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h2 {
-            color: #c9d1d9;
-            margin: 0;
-            font-size: 1.1rem;
-        }
-
-        .modal-body {
-            padding: 1.2rem;
-            overflow-y: auto;
-        }
-
-        .close-modal {
-            color: #8b949e;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            padding: 0.3rem;
-            line-height: 1;
-        }
-
-        .close-modal:hover {
-            color: #c9d1d9;
-        }
-
-        /* Form styles */
-        .form-group {
-            margin-bottom: 0.8rem;
-        }
-
-        .form-group:last-child {
-            margin-bottom: 0;
-        }
-
-        .form-group label {
-            display: block;
-            color: #c9d1d9;
-            margin-bottom: 0.3rem;
-            font-size: 0.85rem;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 95%;
-            padding: 0.8rem;
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #c9d1d9;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            height: auto;
-        }
-
-        .form-group textarea {
-            width: 90%;
-            height: 50px;
-            min-height: 100px;
-            padding: 0.5rem 0.8rem;
-            background-color: #21262d;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #c9d1d9;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            resize: none;
-            overflow-y: auto;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #58a6ff;
-        }
-
-        /* Add scrollbar styles */
-        .modal-body::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .modal-body::-webkit-scrollbar-track {
-            background: #21262d;
-            border-radius: 4px;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb {
-            background: #30363d;
-            border-radius: 4px;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb:hover {
-            background: #40464d;
-        }
-
-        /* Add these styles after the existing styles */
         .teacher-nav {
             background-color: #161b22;
             padding: 1rem 2rem;
@@ -348,1072 +53,350 @@
             font-weight: 600;
         }
 
-        /* Add these new styles */
-        .course-section {
-            margin-bottom: 3rem;
+        .assignments-container {
+            margin-top: 80px;
+            padding: 2rem;
         }
 
-        .course-section .course-header {
+        .assignments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .create-assignment-btn {
+            background-color: #238636;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .create-assignment-btn:hover {
+            background-color: #2ea043;
+        }
+
+        .course-section {
+            margin-bottom: 2rem;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .course-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
+            padding-bottom: 1rem;
             border-bottom: 1px solid #30363d;
         }
 
-        .course-section .course-name {
+        .course-name {
             color: #c9d1d9;
             margin: 0;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
         }
 
-        .course-section .assignment-count {
+        .assignment-count {
             color: #8b949e;
             font-size: 0.9rem;
         }
 
-        .course-assignments {
+        .assignments-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1.5rem;
+            margin-top: 1rem;
         }
 
-        /* Optional: Add transition for filtering */
-        .course-section {
-            transition: all 0.3s ease;
-        }
-
-        /* Update the modal styles */
-        .modal-content {
-            position: relative;
+        .assignment-card {
             background-color: #161b22;
-            margin: 5% auto;
-            padding: 2.5rem;
             border: 1px solid #30363d;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        #assignmentForm {
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            max-height: calc(80vh - 100px);
-            overflow-y: auto;
+            gap: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        /* Style the scrollbar */
-        #assignmentForm::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        #assignmentForm::-webkit-scrollbar-track {
-            background: #21262d;
-            border-radius: 4px;
-        }
-
-        #assignmentForm::-webkit-scrollbar-thumb {
-            background: #30363d;
-            border-radius: 4px;
-        }
-
-        #assignmentForm::-webkit-scrollbar-thumb:hover {
-            background: #40464d;
-        }
-
-        /* Add smooth scrolling */
-        #assignmentForm {
-            scroll-behavior: smooth;
-        }
-
-        /* Update file upload button styles */
-        .form-group input[type="file"] {
-            display: none;  /* Hide the default file input */
-        }
-
-        .form-group .file-upload-btn {
-            background-color: #21262d;
-            border: 1px solid #30363d;
-            color: #c9d1d9;
-            padding: 0.8rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            display: inline-block;
-            width: 90%;  /* Match width of other inputs */
-            text-align: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-group .file-upload-btn:hover {
-            background-color: #30363d;
+        .assignment-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
             border-color: #58a6ff;
+        }
+
+        .assignment-card h4 {
             color: #58a6ff;
-        }
-
-        .selected-files {
-            color: #8b949e;
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-            width: 90%;  /* Match width of other inputs */
-            word-wrap: break-word;  /* Handle long filenames */
-        }
-
-        /* Update form group styles to ensure consistent width */
-        .form-group {
-            margin-bottom: 1.5rem;
-            width: 100%;  /* Increased from 80% */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .form-group label {
-            width: 90%;
-            text-align: left;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 90%;
-        }
-
-        /* Form input styles */
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 90%;
-            padding: 0.8rem 1rem;
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #c9d1d9;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            transition: border-color 0.2s;
-        }
-
-        /* Specific textarea styles */
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-            max-height: 300px;
-        }
-
-        /* Hover and focus states */
-        .form-group input:hover,
-        .form-group textarea:hover,
-        .form-group select:hover,
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            border-color: #58a6ff;
-            outline: none;
-        }
-
-        /* Select element specific styles */
-        .form-group select {
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1em;
-            padding-right: 2.5rem;
-        }
-
-        /* Form group layout */
-        .form-group {
-            margin-bottom: 1.5rem;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .form-group label {
-            width: 90%;
-            text-align: left;
-            margin-bottom: 0.5rem;
-            color: #c9d1d9;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        /* File upload button to match other inputs */
-        .form-group .file-upload-btn {
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            color: #c9d1d9;
-            padding: 0.8rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            display: inline-block;
-            width: 90%;
-            text-align: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-group .file-upload-btn:hover {
-            border-color: #58a6ff;
-            color: #58a6ff;
-        }
-
-        /* Update submit button styles */
-        #assignmentForm .action-btn {
-            width: 97%;  /* Match width of other inputs */
-            padding: 0.8rem 1.2rem;  /* Reduced padding */
-            margin-top: 0.8rem;  /* Reduced margin */
-            background-color: #1f6feb;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 1rem;  /* Slightly larger font */
-            font-weight: 500;  /* Make text slightly bolder */
-            cursor: pointer;
-            transition: all 0.2s;
-            
-        }
-
-        #assignmentForm .action-btn:hover {
-            background-color: #388bfd;
-            transform: translateY(-1px);  /* Slight lift effect */
-        }
-
-        #assignmentForm .action-btn:active {
-            transform: translateY(0);  /* Press effect */
-        }
-
-        /* Add these new styles */
-        .assignment-files {
-            margin: 1rem 0;
-            padding: 1rem;
-            background-color: #21262d;
-            border-radius: 6px;
-        }
-
-        .assignment-files h4 {
-            color: #c9d1d9;
-            margin: 0 0 0.5rem 0;
-            font-size: 0.9rem;
-        }
-
-        .files-list {
-            list-style: none;
-            padding: 0;
             margin: 0;
+            font-size: 1.1rem;
         }
 
-        .file-item {
-            margin: 0.5rem 0;
+        .assignment-content {
+            margin: 1rem 0;
+            color: #c9d1d9;
         }
 
-        .file-link {
-            color: #58a6ff;
-            text-decoration: none;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            transition: color 0.2s;
-        }
-
-        .file-link:hover {
-            color: #79c0ff;
-            text-decoration: underline;
-        }
-
-        .file-link::before {
-            content: "📎";
-            margin-right: 0.5rem;
-        }
-
-        .delete-all-btn {
+        .assignment-dates {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            padding: 0.5rem;
             background-color: #21262d;
-            color: #f85149;
-            border: 1px solid #f85149;
-            padding: 0.8rem 1.5rem;
             border-radius: 6px;
-            cursor: pointer;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            height: 100%;
         }
 
-        .delete-all-btn:hover {
-            background-color: #f85149;
-            color: #ffffff;
-            transform: translateY(-1px);
-        }
-
-        .delete-all-btn:active {
-            transform: translateY(0);
-        }
-
-        .assignment-header {
+        .date-item {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.5rem;
+            align-items: center;
+        }
+
+        .date-label {
+            color: #8b949e;
+            font-size: 0.9rem;
+        }
+
+        .date-value {
+            color: #c9d1d9;
+            font-size: 0.9rem;
+        }
+
+        .assignment-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 1rem 0;
+            border-top: 1px solid #30363d;
+            margin-top: auto;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            color: #58a6ff;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .stat-label {
+            color: #8b949e;
+            font-size: 0.8rem;
+            margin-top: 0.2rem;
+        }
+
+        .assignment-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .view-btn {
+            background-color: #238636;
+            color: white;
+        }
+
+        .view-btn:hover {
+            background-color: #2ea043;
         }
 
         .delete-btn {
-            background: none;
-            border: none;
-            padding: 0.5rem;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.2s;
-            margin-left: auto;
-        }
-
-        .delete-icon {
-            font-size: 1.1rem;
-            color: #f85149;
-        }
-
-        .assignment-card:hover .delete-btn {
-            opacity: 1;
-        }
-
-        .delete-btn:hover .delete-icon {
-            transform: scale(1.1);
-        }
-
-        /* Add inside your existing style tag */
-        .students-grades-list {
-            margin-top: 1rem;
-        }
-
-        .student-grade-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            margin-bottom: 0.5rem;
-            background-color: #21262d;
-        }
-
-        .student-info {
-            flex: 1;
-        }
-
-        .student-name {
-            color: #c9d1d9;
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-
-        .submission-status {
-            color: #8b949e;
-            font-size: 0.9rem;
-        }
-
-        .grade-input-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .grade-input {
-            width: 80px;
-            padding: 0.5rem;
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 4px;
-            color: #c9d1d9;
-            font-family: 'IBM Plex Mono', monospace;
-        }
-
-        .save-grade-btn {
-            background-color: #238636;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'IBM Plex Mono', monospace;
-            transition: background-color 0.2s;
-        }
-
-        .save-grade-btn:hover {
-            background-color: #2ea043;
-        }
-
-        .course-name-header {
-            color: #8b949e;
-            margin-bottom: 0.5rem;
-        }
-
-        .assignment-name-header {
-            color: #c9d1d9;
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Update these styles */
-        .courses-actions {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .delete-all-btn {
             background-color: #21262d;
             color: #f85149;
             border: 1px solid #f85149;
-            padding: 0.8rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            transition: all 0.2s;
+            margin-left: 0.5rem;
         }
 
-        .delete-all-btn:hover {
+        .delete-btn:hover {
             background-color: #f85149;
-            color: #ffffff;
-            transform: translateY(-1px);
-        }
-
-        .delete-all-btn:active {
-            transform: translateY(0);
-        }
-
-        .create-course-btn {
-            background-color: #238636;
-            color: #ffffff;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-
-        .create-course-btn:hover {
-            background-color: #2ea043;
-            transform: translateY(-1px);
-        }
-
-        .create-course-btn:active {
-            transform: translateY(0);
-        }
-
-        /* Add these new styles */
-        .submissions-list {
-            margin-top: 2rem;
-        }
-
-        .submission-card {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .submission-card:hover {
-            transform: translateY(-2px);
-            border-color: #58a6ff;
-        }
-
-        .submission-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            position: relative;
-        }
-
-        .submission-info {
-            flex: 1;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-right: 2rem;
-        }
-
-        .student-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .student-name {
-            color: #c9d1d9;
-            font-weight: 500;
-            font-size: 1rem;
-        }
-
-        .submission-date {
-            color: #8b949e;
-            font-size: 0.9rem;
-        }
-
-        .view-more {
-            color: #58a6ff;
-        }
-
-        .view-more-icon {
-            font-size: 1.2rem;
-        }
-
-        .submission-content {
-            color: #c9d1d9;
-            margin-bottom: 1rem;
-            white-space: pre-line;
-        }
-
-        .submission-files {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-bottom: 1rem;
-        }
-
-        .submission-file {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 4px;
-            padding: 0.5rem 1rem;
-            color: #58a6ff;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .submission-file:hover {
-            background-color: #1f2428;
-            border-color: #58a6ff;
-        }
-
-        .grading-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #30363d;
-        }
-
-        .grade-input {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 4px;
-            padding: 0.5rem;
-            color: #c9d1d9;
-            width: 80px;
-            font-family: 'IBM Plex Mono', monospace;
-        }
-
-        .grade-input:focus {
-            outline: none;
-            border-color: #58a6ff;
-        }
-
-        .save-grade-btn {
-            background-color: #238636;
             color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'IBM Plex Mono', monospace;
-            transition: all 0.2s;
         }
 
-        .save-grade-btn:hover {
-            background-color: #2ea043;
-            transform: translateY(-1px);
-        }
-
-        .no-submission {
-            color: #8b949e;
-            text-align: center;
-            padding: 2rem;
-            font-style: italic;
-        }
-
-        /* Add these new styles */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            color: #c9d1d9;
-        }
-
-        /* Add these new styles */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            color: #c9d1d9;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
             width: 100%;
-            padding: 0.8rem;
-            background-color: #21262d;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #c9d1d9;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
         }
 
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #58a6ff;
-        }
-
-        .submit-btn {
-            background-color: #238636;
-            color: white;
-            border: none;
-            padding: 0 1.2rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            width: 100%;
-            transition: all 0.2s;
-        }
-
-        .submit-btn:hover {
-            background-color: #2ea043;
-            transform: translateY(-1px);
-        }
-
-        /* Update textarea styles */
-        .form-group textarea {
-            width: 100%;
-            height: 200px; /* Fixed height */
-            padding: 0.8rem;
-            background-color: #21262d;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #c9d1d9;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            resize: none; /* Prevent manual resizing */
-            overflow-y: auto; /* Enable scrolling */
-        }
-
-        /* Add scrollbar styles for textarea */
-        .form-group textarea::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .form-group textarea::-webkit-scrollbar-track {
-            background: #161b22;
-            border-radius: 4px;
-        }
-
-        .form-group textarea::-webkit-scrollbar-thumb {
-            background: #30363d;
-            border-radius: 4px;
-        }
-
-        .form-group textarea::-webkit-scrollbar-thumb:hover {
-            background: #40464d;
-        }
-
-        /* Update input and select styles to match */
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 0.8rem;
-            background-color: #21262d;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #c9d1d9;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #58a6ff;
-        }
-
-        /* Add placeholder styling */
-        .form-group textarea::placeholder {
-            color: #8b949e;
-        }
-
-        /* Add responsive adjustments */
-        @media (max-height: 600px) {
-            .modal-content {
-                margin: 10px auto;
-            }
-            
-            .modal-header {
-                padding: 0.8rem 1.2rem;
-            }
-            
-            .modal-body {
-                padding: 1rem;
-            }
-            
-            .form-group {
-                margin-bottom: 0.8rem;
-            }
-            
-            .form-group textarea {
-                height: 100px;
-                min-height: 100px;
-            }
-        }
-
-        /* Ensure inputs and buttons have consistent height */
-        .form-group input,
-        .form-group select,
-        .submit-btn {
-            height: 40px;
-        }
-
-        /* Update modal styles */
         .modal-content {
-            background-color: #161b22;
+            background-color: #0d1117;
             margin: 5% auto;
             padding: 2rem;
             border: 1px solid #30363d;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
-            position: relative;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
-        /* Update form styles */
-        #createAssignmentForm {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .form-group {
-            margin: 0;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .form-group label {
-            width: 100%;
-            color: #c9d1d9;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.8rem;
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #c9d1d9;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            height: auto;
-        }
-
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        /* Update submit button styles */
-        #createAssignmentForm .submit-btn {
-            width: 100%;
-            background-color: #238636;
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 6px;
+        .close-modal {
+            float: right;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #8b949e;
             cursor: pointer;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            margin-top: 0.5rem;
         }
 
-        #createAssignmentForm .submit-btn:hover {
-            background-color: #2ea043;
-            transform: translateY(-1px);
-        }
-
-        /* Input fields */
-        .form-group input {
-            width: 95%;
-            padding: 0.8rem;
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 6px;
+        .close-modal:hover {
             color: #c9d1d9;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
         }
 
-        /* Select dropdowns */
-        .form-group select {
-            width: 100%;
-            padding: 0.8rem;
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #c9d1d9;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1em;
-            padding-right: 2.5rem;
+        .submissions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
         }
 
-        /* Textarea fields */
-        .form-group textarea {
-            width: 95%;
-            min-height: 120px;
-            padding: 0.8rem;
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #c9d1d9;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            resize: vertical;
-            line-height: 1.5;
-        }
-
-        /* Hover and focus states for all inputs */
-        .form-group input:hover,
-        .form-group select:hover,
-        .form-group textarea:hover {
-            border-color: #30363d;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: #58a6ff;
-            outline: none;
-        }
-
-        .submission-files {
-            margin: 1rem 0;
-            padding: 0.5rem;
-            background-color: #21262d;
-            border-radius: 6px;
-        }
-
-        .file-link {
-            display: inline-flex;
-            align-items: center;
-            color: #58a6ff;
-            text-decoration: none;
-            padding: 0.5rem;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-
-        .file-link:hover {
-            background-color: rgba(88, 166, 255, 0.1);
-            text-decoration: underline;
-        }
-
-        .submission-content {
-            margin: 1rem 0;
-            padding: 1rem;
-            background-color: #21262d;
-            border-radius: 6px;
-            white-space: pre-wrap;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .status-pending {
-            color: #f0883e;
-            background: rgba(240, 136, 62, 0.1);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-
-        .status-rejected {
-            color: #f85149;
-            background: rgba(248, 81, 73, 0.1);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-
-        .status-accepted {
-            color: #3fb950;
-            background: rgba(63, 185, 80, 0.1);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-
-        .grade-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .accept-btn, .reject-btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-
-        .accept-btn {
-            background-color: #238636;
-            color: white;
-        }
-
-        .accept-btn:hover {
-            background-color: #2ea043;
-        }
-
-        .reject-btn {
-            background-color: #da3633;
-            color: white;
-        }
-
-        .reject-btn:hover {
-            background-color: #f85149;
-        }
-
-        .submission-card {
+        .mini-submission-card {
             background-color: #161b22;
             border: 1px solid #30363d;
             border-radius: 8px;
-            margin-bottom: 1rem;
+            padding: 1rem;
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
-        .submission-card:hover {
+        .mini-submission-card:hover {
             transform: translateY(-2px);
             border-color: #58a6ff;
-        }
-
-        .submission-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            position: relative;
-        }
-
-        .submission-info {
-            flex: 1;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-right: 2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .student-info {
             display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .student-name {
             color: #c9d1d9;
             font-weight: 500;
-            font-size: 1rem;
-        }
-
-        .submission-date {
-            color: #8b949e;
             font-size: 0.9rem;
         }
 
         .submission-status {
-            padding: 0.25rem 0.75rem;
+            padding: 0.25rem 0.5rem;
             border-radius: 12px;
-            font-size: 0.9rem;
+            font-size: 0.75rem;
+            font-weight: 500;
         }
 
-        .view-more {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #58a6ff;
-            opacity: 0.7;
-            transition: opacity 0.2s ease;
+        .status-graded {
+            background-color: rgba(35, 134, 54, 0.2);
+            color: #3fb950;
         }
 
-        .view-more-icon {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .submission-card:hover .view-more {
-            opacity: 1;
-        }
-
-        .status-pending {
-            background-color: rgba(240, 136, 62, 0.1);
-            color: #f0883e;
+        .status-ungraded {
+            background-color: rgba(210, 153, 34, 0.2);
+            color: #d29922;
         }
 
         .status-rejected {
-            background-color: rgba(248, 81, 73, 0.1);
+            background-color: rgba(248, 81, 73, 0.2);
             color: #f85149;
         }
 
-        .status-accepted {
-            background-color: rgba(63, 185, 80, 0.1);
-            color: #3fb950;
+        .no-submissions {
+            text-align: center;
+            color: #8b949e;
+            font-style: italic;
+            grid-column: 1 / -1;
+            padding: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .filter-section {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .filter-input, .filter-select {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            padding: 0.5rem 1rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .filter-input {
+            flex: 2;
+        }
+
+        .filter-select {
+            flex: 1;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
+
+        .clear-filters-btn {
+            background-color: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .clear-filters-btn:hover {
+            background-color: #30363d;
+            border-color: #58a6ff;
+        }
+
+        .welcome-text {
+            color: #8b949e;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
@@ -1430,510 +413,35 @@
     </nav>
 
     <div class="assignments-container">
-        <h1>Assignments</h1>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-            <select id="courseFilter" class="course-filter" onchange="filterAssignments()">
-                <option value="all">All Courses</option>
-            </select>
-            <div class="courses-actions">
-                <button class="delete-all-btn" onclick="confirmDeleteAllAssignments()">Delete All Assignments</button>
-                <button class="create-course-btn" onclick="openAssignmentModal()">Create Assignment</button>
+        <div class="assignments-header">
+            <div>
+                <h1>Assignments</h1>
+                <p class="welcome-text">Welcome, <span id="teacherName">Teacher</span></p>
             </div>
+            <button class="create-assignment-btn" onclick="window.location.href='create-assignment.html'">Create Assignment</button>
         </div>
-        <div id="assignmentsList" class="assignments-list">
+        
+        <div class="filter-section">
+            <div class="filter-group">
+                <input type="text" id="searchFilter" placeholder="Search assignments..." class="filter-input">
+                <select id="courseFilter" class="filter-select">
+                    <option value="">All Courses</option>
+                </select>
+                <select id="statusFilter" class="filter-select">
+                    <option value="">All Statuses</option>
+                    <option value="due">Due</option>
+                    <option value="upcoming">Upcoming</option>
+                    <option value="past">Past</option>
+                </select>
+            </div>
+            <button id="clearFilters" class="clear-filters-btn">Clear Filters</button>
+        </div>
+
+        <div id="assignmentsList">
             <!-- Assignments will be dynamically added here -->
         </div>
     </div>
 
-    <div id="assignmentModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('assignmentModal')">&times;</span>
-            <h2>Course Assignments</h2>
-            <p class="modal-description">
-                View and manage all assignments for this course
-            </p>
-            <button 
-                onclick="viewCourseAssignments()" 
-                class="action-btn">
-                View Assignments
-            </button>
-        </div>
-    </div>
-
-    <!-- Add this modal before the closing body tag -->
-    <div id="gradeAssignmentModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('gradeAssignmentModal')">&times;</span>
-            <h2>Grade Assignment</h2>
-            <div class="assignment-info">
-                <h3 id="assignmentName"></h3>
-                <p id="assignmentDescription" class="assignment-description"></p>
-            </div>
-            <div class="submissions-list">
-                <h4>Student Submissions</h4>
-                <div id="submissionsList">
-                    <!-- Submissions will be loaded here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="createAssignmentModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Create Assignment</h2>
-                <span class="close-modal" onclick="closeModal('createAssignmentModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="createAssignmentForm" onsubmit="createAssignment(event)">
-                    <div class="form-group">
-                        <label for="assignmentCourse">Course</label>
-                        <select id="assignmentCourse" required>
-                            <!-- Courses will be loaded here -->
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="assignmentName">Assignment Name</label>
-                        <input type="text" id="assignmentName" required 
-                               placeholder="Enter assignment name">
-                    </div>
-                    <div class="form-group">
-                        <label for="assignmentDescription">Description</label>
-                        <textarea id="assignmentDescription" required 
-                                placeholder="Enter assignment description..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="assignmentDueDate">Due Date</label>
-                        <input type="datetime-local" id="assignmentDueDate" required>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="submit-btn">Create Assignment</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        window.onload = function() {
-            checkTeacherAuth();
-            loadAssignments();
-            populateCourseFilter();
-            
-            // Add this: Check for courseId parameter and filter if present
-            const urlParams = new URLSearchParams(window.location.search);
-            const courseId = urlParams.get('courseId');
-            if (courseId) {
-                document.getElementById('courseFilter').value = courseId;
-                filterAssignments();
-            }
-        };
-
-        function checkTeacherAuth() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser || currentUser.role !== 'teacher') {
-                window.location.href = '../login-signup.html';
-            }
-        }
-
-        function populateCourseFilter() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const courses = JSON.parse(localStorage.getItem('courses')) || [];
-            const teacherCourses = courses.filter(course => course.teacherId === currentUser.id);
-            
-            const courseFilter = document.getElementById('courseFilter');
-            teacherCourses.forEach(course => {
-                const option = document.createElement('option');
-                option.value = course.id;
-                option.textContent = course.name;
-                courseFilter.appendChild(option);
-            });
-        }
-
-        function loadAssignments() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const courses = JSON.parse(localStorage.getItem('courses')) || [];
-            const teacherCourses = courses.filter(course => course.teacherId === currentUser.id);
-            
-            const assignmentsList = document.getElementById('assignmentsList');
-            assignmentsList.innerHTML = '';
-
-            let hasAssignments = false;
-
-            teacherCourses.forEach(course => {
-                if (course.assignments && course.assignments.length > 0) {
-                    // Create course section
-                    const courseSection = document.createElement('div');
-                    courseSection.className = 'course-section';
-                    courseSection.dataset.courseId = course.id;
-                    
-                    // Add course header
-                    courseSection.innerHTML = `
-                        <div class="course-header">
-                            <h2 class="course-name">${course.name}</h2>
-                            <span class="assignment-count">${course.assignments.length} Assignment${course.assignments.length !== 1 ? 's' : ''}</span>
-                        </div>
-                        <div class="course-assignments"></div>
-                    `;
-
-                    // Add assignments for this course
-                    const courseAssignments = courseSection.querySelector('.course-assignments');
-                    course.assignments.forEach(assignment => {
-                        const assignmentCard = createAssignmentCard(assignment, course);
-                        courseAssignments.appendChild(assignmentCard);
-                    });
-
-                    assignmentsList.appendChild(courseSection);
-                    hasAssignments = true;
-                }
-            });
-
-            if (!hasAssignments) {
-                assignmentsList.innerHTML = '<div class="no-assignments">No assignments created yet.</div>';
-            }
-        }
-
-        function createAssignmentCard(assignment, course) {
-            const card = document.createElement('div');
-            card.className = 'assignment-card';
-            
-            const submissionsCount = Object.keys(assignment.submissions || {}).length;
-            const totalStudents = course.students?.length || 0;
-            
-            card.innerHTML = `
-                <div class="assignment-header">
-                    <div class="assignment-info">
-                        <h3 class="assignment-title">${assignment.name}</h3>
-                        <div class="assignment-date">Due: ${new Date(assignment.dueDate).toLocaleDateString()}</div>
-                    </div>
-                    <button class="delete-btn" onclick="confirmDeleteAssignment('${course.id}', '${assignment.id}')">
-                        <span class="delete-icon">🗑️</span>
-                    </button>
-                </div>
-                
-                <div class="assignment-description">
-                    ${assignment.description}
-                </div>
-                
-                <div class="assignment-stats">
-                    <div class="stat-item">
-                        <div class="stat-value">${submissionsCount}</div>
-                        <div class="stat-label">Submissions</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">${totalStudents}</div>
-                        <div class="stat-label">Total Students</div>
-                    </div>
-                </div>
-
-                <div class="assignment-actions">
-                    <button class="action-btn grade-btn" onclick="openGradeModal('${course.id}', '${assignment.id}')">
-                        Grade Assignment
-                    </button>
-                </div>
-            `;
-            
-            return card;
-        }
-
-        function filterAssignments() {
-            const selectedCourseId = document.getElementById('courseFilter').value;
-            const courseSections = document.querySelectorAll('.course-section');
-            const noAssignmentsDiv = document.querySelector('.no-assignments');
-
-            let hasVisibleSections = false;
-
-            courseSections.forEach(section => {
-                if (selectedCourseId === 'all' || section.dataset.courseId === selectedCourseId) {
-                    section.style.display = 'block';
-                    hasVisibleSections = true;
-                } else {
-                    section.style.display = 'none';
-                }
-            });
-
-            // Show "no assignments" message if no sections are visible
-            if (!hasVisibleSections) {
-                if (!noAssignmentsDiv) {
-                    const assignmentsList = document.getElementById('assignmentsList');
-                    assignmentsList.innerHTML = '<div class="no-assignments">No assignments found for this course.</div>';
-                }
-            }
-        }
-
-        function openAssignmentModal() {
-            const modal = document.getElementById('createAssignmentModal');
-            const courseSelect = document.getElementById('assignmentCourse');
-            
-            // Load courses into select
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const courses = JSON.parse(localStorage.getItem('courses')) || [];
-            const teacherCourses = courses.filter(course => course.teacherId === currentUser.id);
-            
-            courseSelect.innerHTML = '';
-            teacherCourses.forEach(course => {
-                const option = document.createElement('option');
-                option.value = course.id;
-                option.textContent = course.name;
-                courseSelect.appendChild(option);
-            });
-            
-            modal.style.display = 'block';
-        }
-
-        function createAssignment(event) {
-            event.preventDefault();
-            
-            const courseId = document.getElementById('assignmentCourse').value;
-            const name = document.getElementById('assignmentName').value;
-            const description = document.getElementById('assignmentDescription').value;
-            const dueDate = document.getElementById('assignmentDueDate').value;
-            
-            const courses = JSON.parse(localStorage.getItem('courses')) || [];
-            const courseIndex = courses.findIndex(c => c.id === courseId);
-            
-            if (courseIndex === -1) {
-                alert('Course not found');
-                return;
-            }
-            
-            const newAssignment = {
-                id: generateId(),
-                name,
-                description,
-                dueDate,
-                submissions: {}
-            };
-            
-            if (!courses[courseIndex].assignments) {
-                courses[courseIndex].assignments = [];
-            }
-            
-            courses[courseIndex].assignments.push(newAssignment);
-            localStorage.setItem('courses', JSON.stringify(courses));
-            
-            // Reset form and close modal
-            document.getElementById('createAssignmentForm').reset();
-            closeModal('createAssignmentModal');
-            
-            // Refresh assignments list
-            loadAssignments();
-        }
-
-        function generateId() {
-            return Math.random().toString(36).substr(2, 9);
-        }
-
-        // Add this function to handle file input changes
-        document.getElementById('assignmentFiles').addEventListener('change', function(e) {
-            const fileList = e.target.files;
-            const selectedFilesDiv = document.querySelector('.selected-files');
-            if (fileList.length > 0) {
-                selectedFilesDiv.innerHTML = Array.from(fileList)
-                    .map(file => `<div>${file.name}</div>`)
-                    .join('');
-            } else {
-                selectedFilesDiv.innerHTML = '';
-            }
-        });
-
-        // Add this event listener for clicking outside modals
-        window.onclick = function(event) {
-            const modals = document.getElementsByClassName('modal');
-            for (let modal of modals) {
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
-            }
-        }
-
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            modal.style.display = 'none';
-        }
-
-        function confirmDeleteAllAssignments() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const courses = JSON.parse(localStorage.getItem('courses')) || [];
-            const teacherCourses = courses.filter(course => course.teacherId === currentUser.id);
-            
-            // Count total assignments
-            const totalAssignments = teacherCourses.reduce((total, course) => 
-                total + (course.assignments?.length || 0), 0);
-            
-            if (totalAssignments === 0) {
-                alert('You have no assignments to delete.');
-                return;
-            }
-
-            const confirmDelete = confirm(`Are you sure you want to delete all your assignments (${totalAssignments} assignments)? This action cannot be undone.`);
-            if (confirmDelete) {
-                deleteAllAssignments();
-            }
-        }
-
-        function deleteAllAssignments() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const courses = JSON.parse(localStorage.getItem('courses')) || [];
-            
-            // Remove all assignments from teacher's courses
-            const updatedCourses = courses.map(course => {
-                if (course.teacherId === currentUser.id) {
-                    return { ...course, assignments: [] };
-                }
-                return course;
-            });
-            
-            localStorage.setItem('courses', JSON.stringify(updatedCourses));
-            loadAssignments(); // Refresh the assignments list
-        }
-
-        function confirmDeleteAssignment(courseId, assignmentId) {
-            const confirmDelete = confirm('Are you sure you want to delete this assignment? This action cannot be undone.');
-            if (confirmDelete) {
-                deleteAssignment(courseId, assignmentId);
-            }
-        }
-
-        function deleteAssignment(courseId, assignmentId) {
-            const courses = JSON.parse(localStorage.getItem('courses')) || [];
-            const courseIndex = courses.findIndex(c => c.id === courseId);
-            
-            if (courseIndex !== -1) {
-                courses[courseIndex].assignments = courses[courseIndex].assignments.filter(
-                    assignment => assignment.id !== assignmentId
-                );
-                
-                localStorage.setItem('courses', JSON.stringify(courses));
-                loadAssignments(); // Refresh the assignments list
-            }
-        }
-
-        // Add these new functions
-        function openGradeModal(courseId, assignmentId) {
-            const modal = document.getElementById('gradeAssignmentModal');
-            const courses = JSON.parse(localStorage.getItem('courses')) || [];
-            const course = courses.find(c => c.id === courseId);
-            const assignment = course.assignments.find(a => a.id === assignmentId);
-
-            document.getElementById('assignmentName').textContent = assignment.name;
-            document.getElementById('assignmentDescription').textContent = assignment.description;
-
-            const submissionsList = document.getElementById('submissionsList');
-            submissionsList.innerHTML = '';
-
-            if (course.students && course.students.length > 0) {
-                course.students.forEach(student => {
-                    const submission = assignment.submissions?.[student.id];
-                    const submissionCard = document.createElement('div');
-                    submissionCard.className = 'submission-card';
-
-                    if (submission) {
-                        const status = submission.status || 'pending';
-                        const statusClass = {
-                            'pending': 'status-pending',
-                            'rejected': 'status-rejected',
-                            'accepted': 'status-accepted'
-                        }[status];
-
-                        submissionCard.innerHTML = `
-                            <div class="submission-header" 
-                                 onclick="window.location.href='submission-teacher.html?courseId=${courseId}&assignmentId=${assignmentId}&studentId=${student.id}'">
-                                <div class="submission-info">
-                                    <div class="student-info">
-                                        <span class="student-name">${student.username}</span>
-                                        <span class="submission-date">
-                                            Submitted: ${new Date(submission.timestamp).toLocaleString()}
-                                        </span>
-                                    </div>
-                                    <div class="submission-status ${statusClass}">
-                                        ${status.charAt(0).toUpperCase() + status.slice(1)}
-                                        ${submission.grade ? ` | Grade: ${submission.grade}/100` : ''}
-                                    </div>
-                                </div>
-                                <div class="view-more">
-                                    <span class="view-more-icon">→</span>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        submissionCard.innerHTML = `
-                            <div class="submission-header">
-                                <div class="submission-info">
-                                    <div class="student-info">
-                                        <span class="student-name">${student.username}</span>
-                                    </div>
-                                    <div class="submission-status status-pending">Not Submitted</div>
-                                </div>
-                            </div>
-                        `;
-                    }
-
-                    submissionsList.appendChild(submissionCard);
-                });
-            } else {
-                submissionsList.innerHTML = `
-                    <div class="no-submissions">No students enrolled in this course</div>
-                `;
-            }
-
-            modal.style.display = 'block';
-        }
-
-        function rejectSubmission(courseId, assignmentId, studentId) {
-            const reason = prompt('Please provide a reason for rejection:');
-            if (reason === null) return; // User cancelled
-
-            updateSubmissionStatus(courseId, assignmentId, studentId, 'rejected', reason);
-        }
-
-        function updateSubmissionStatus(courseId, assignmentId, studentId, status, reason = '') {
-            const courses = JSON.parse(localStorage.getItem('courses')) || [];
-            const courseIndex = courses.findIndex(c => c.id === courseId);
-            const assignment = courses[courseIndex].assignments.find(a => a.id === assignmentId);
-            
-            if (assignment.submissions?.[studentId]) {
-                assignment.submissions[studentId].status = status;
-                if (reason) {
-                    assignment.submissions[studentId].rejectionReason = reason;
-                }
-                
-                localStorage.setItem('courses', JSON.stringify(courses));
-                openGradeModal(courseId, assignmentId); // Refresh the modal
-            }
-        }
-
-        function saveGrade(courseId, assignmentId, studentId, button) {
-            const gradeInput = button.previousElementSibling;
-            const grade = Number(gradeInput.value);
-            
-            if (isNaN(grade) || grade < 0 || grade > 100) {
-                alert('Please enter a valid grade between 0 and 100');
-                return;
-            }
-
-            const courses = JSON.parse(localStorage.getItem('courses')) || [];
-            const courseIndex = courses.findIndex(c => c.id === courseId);
-            const assignment = courses[courseIndex].assignments.find(a => a.id === assignmentId);
-            
-            if (!assignment.submissions) {
-                assignment.submissions = {};
-            }
-            if (!assignment.submissions[studentId]) {
-                assignment.submissions[studentId] = {};
-            }
-            
-            assignment.submissions[studentId].grade = grade;
-            localStorage.setItem('courses', JSON.stringify(courses));
-
-            // Show success feedback
-            const originalText = button.textContent;
-            button.textContent = 'Saved!';
-            button.style.backgroundColor = '#238636';
-            setTimeout(() => {
-                button.textContent = originalText;
-            }, 2000);
-        }
-    </script>
+    <script src="teacher.js"></script>
 </body>
 </html>

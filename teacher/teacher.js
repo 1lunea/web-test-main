@@ -1,7 +1,14 @@
 window.onload = function() {
     checkTeacherAuth();
-    loadCourses();
     loadTeacherName();
+    
+    // Check if we're on the assignments page
+    if (window.location.href.includes('teacher-assignments.html')) {
+        loadAssignments();
+    } else {
+        // We're on the dashboard page
+        loadCourses();
+    }
 };
 
 function checkTeacherAuth() {
@@ -37,6 +44,15 @@ function loadCourses() {
     
     const coursesList = document.getElementById('coursesList');
     coursesList.innerHTML = '';
+
+    if (teacherCourses.length === 0) {
+        coursesList.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; color: #8b949e; padding: 2rem;">
+                No courses created yet. Click "Create Course" to get started.
+            </div>
+        `;
+        return;
+    }
 
     teacherCourses.forEach(course => {
         const courseCard = createCourseCard(course);
@@ -86,7 +102,9 @@ function createCourseCard(course) {
 }
 
 function viewCourseAssignments(courseId) {
-    window.location.href = `teacher-assignments.html?courseId=${courseId}`;
+    // Store the selected courseId in sessionStorage
+    sessionStorage.setItem('selectedCourseId', courseId);
+    window.location.href = 'teacher-assignments.html';
 }
 
 function openGradeModal(courseId, assignmentId) {
@@ -204,6 +222,13 @@ function addAssignment(event) {
     const courseId = document.getElementById('courseIdInput').value;
     const assignmentName = document.getElementById('assignmentName').value;
     const assignmentDescription = document.getElementById('assignmentDescription').value;
+    const dueDate = document.getElementById('dueDateInput').value;
+
+    // Validate inputs
+    if (!assignmentName || !assignmentDescription) {
+        alert('Please fill in all required fields');
+        return;
+    }
 
     const courses = JSON.parse(localStorage.getItem('courses')) || [];
     const courseIndex = courses.findIndex(c => c.id === courseId);
@@ -213,19 +238,204 @@ function addAssignment(event) {
             courses[courseIndex].assignments = [];
         }
         
-        courses[courseIndex].assignments.push({
+        // Create new assignment with all required fields
+        const newAssignment = {
             id: 'assignment_' + Date.now(),
             name: assignmentName,
             description: assignmentDescription,
             dateCreated: new Date().toISOString(),
+            dueDate: dueDate ? new Date(dueDate).toISOString() : null,
+            submissions: {},
             grades: {}
-        });
+        };
         
+        courses[courseIndex].assignments.push(newAssignment);
         localStorage.setItem('courses', JSON.stringify(courses));
+        
+        // Clear form and close modal
         closeModal('assignmentModal');
         document.getElementById('assignmentForm').reset();
         loadCourses();
     }
+}
+
+function createAssignmentCard(assignment, course) {
+    const submissionsCount = Object.keys(assignment.submissions || {}).length;
+    const totalStudents = course.students?.length || 0;
+    const gradedCount = Object.values(assignment.submissions || {})
+        .filter(sub => sub.grade !== undefined).length;
+
+    const card = document.createElement('div');
+    card.className = 'assignment-card';
+    card.innerHTML = `
+        <h4>${assignment.name || 'Untitled Assignment'}</h4>
+        <div class="assignment-content">
+            <p>${assignment.description || 'No description provided'}</p>
+        </div>
+        <div class="assignment-dates">
+            <div class="date-item">
+                <span class="date-label">Posted:</span>
+                <span class="date-value">${new Date(assignment.dateCreated).toLocaleDateString()}</span>
+            </div>
+            <div class="date-item">
+                <span class="date-label">Due:</span>
+                <span class="date-value">${assignment.dueDate ? new Date(assignment.dueDate).toLocaleDateString() : 'No due date'}</span>
+            </div>
+        </div>
+        <div class="assignment-stats">
+            <div class="stat-item">
+                <div class="stat-value">${submissionsCount}</div>
+                <div class="stat-label">Submitted</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">${gradedCount}</div>
+                <div class="stat-label">Graded</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">${totalStudents}</div>
+                <div class="stat-label">Total</div>
+            </div>
+        </div>
+        <div class="assignment-actions">
+            <button class="action-btn view-btn" onclick="viewSubmissions('${course.id}', '${assignment.id}')">
+                View Submissions
+            </button>
+            <button class="action-btn delete-btn" onclick="confirmDeleteAssignment('${course.id}', '${assignment.id}')">
+                Delete
+            </button>
+        </div>
+    `;
+    return card;
+}
+
+function populateCourseFilter() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const courses = JSON.parse(localStorage.getItem('courses')) || [];
+    const teacherCourses = courses.filter(course => course.teacherId === currentUser.id);
+    
+    const courseFilter = document.getElementById('courseFilter');
+    courseFilter.innerHTML = '<option value="">All Courses</option>';
+    
+    teacherCourses.forEach(course => {
+        courseFilter.innerHTML += `
+            <option value="${course.id}">${course.name}</option>
+        `;
+    });
+}
+
+function filterAssignments() {
+    const searchQuery = document.getElementById('searchFilter').value.toLowerCase();
+    const selectedCourseId = document.getElementById('courseFilter').value;
+    const status = document.getElementById('statusFilter').value;
+    
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const courses = JSON.parse(localStorage.getItem('courses')) || [];
+    let teacherCourses = courses.filter(course => course.teacherId === currentUser.id);
+    
+    // Filter by course if selected
+    if (selectedCourseId) {
+        teacherCourses = teacherCourses.filter(course => course.id === selectedCourseId);
+    }
+    
+    const assignmentsList = document.getElementById('assignmentsList');
+    assignmentsList.innerHTML = '';
+    
+    let hasAssignments = false;
+
+    teacherCourses.forEach(course => {
+        if (!course.assignments || course.assignments.length === 0) return;
+
+        const filteredAssignments = course.assignments.filter(assignment => {
+            const matchesSearch = (
+                assignment.name?.toLowerCase().includes(searchQuery) || 
+                assignment.description?.toLowerCase().includes(searchQuery)
+            );
+            
+            let matchesStatus = true;
+            if (status) {
+                const now = new Date();
+                const dueDate = assignment.dueDate ? new Date(assignment.dueDate) : null;
+                
+                switch (status) {
+                    case 'due':
+                        matchesStatus = dueDate && 
+                            dueDate >= now && 
+                            dueDate <= new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+                        break;
+                    case 'upcoming':
+                        matchesStatus = dueDate && 
+                            dueDate > new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+                        break;
+                    case 'past':
+                        matchesStatus = dueDate && dueDate < now;
+                        break;
+                }
+            }
+            
+            return matchesSearch && matchesStatus;
+        });
+
+        if (filteredAssignments.length > 0) {
+            hasAssignments = true;
+            const courseSection = document.createElement('div');
+            courseSection.className = 'course-section';
+            courseSection.innerHTML = `
+                <div class="course-header">
+                    <h3 class="course-name">${course.name}</h3>
+                    <span class="assignment-count">
+                        ${filteredAssignments.length} assignment${filteredAssignments.length !== 1 ? 's' : ''}
+                    </span>
+                </div>
+            `;
+            
+            const assignmentsGrid = document.createElement('div');
+            assignmentsGrid.className = 'assignments-grid';
+            
+            filteredAssignments.forEach(assignment => {
+                assignmentsGrid.appendChild(createAssignmentCard(assignment, course));
+            });
+            
+            courseSection.appendChild(assignmentsGrid);
+            assignmentsList.appendChild(courseSection);
+        }
+    });
+
+    if (!hasAssignments) {
+        assignmentsList.innerHTML = `
+            <p style="color: #8b949e; text-align: center;">
+                No assignments found matching the filters.
+            </p>
+        `;
+    }
+}
+
+// Update the loadAssignments function
+function loadAssignments() {
+    populateCourseFilter();
+    
+    // Check if there's a selected course from the dashboard
+    const selectedCourseId = sessionStorage.getItem('selectedCourseId');
+    if (selectedCourseId) {
+        // Set the course filter to the selected course
+        document.getElementById('courseFilter').value = selectedCourseId;
+        // Clear the stored selection
+        sessionStorage.removeItem('selectedCourseId');
+    }
+    
+    filterAssignments();
+    
+    // Add event listeners for filter changes
+    document.getElementById('searchFilter').addEventListener('input', filterAssignments);
+    document.getElementById('courseFilter').addEventListener('change', filterAssignments);
+    document.getElementById('statusFilter').addEventListener('change', filterAssignments);
+    
+    // Add event listener for clear filters button
+    document.getElementById('clearFilters').addEventListener('click', () => {
+        document.getElementById('searchFilter').value = '';
+        document.getElementById('courseFilter').value = '';
+        document.getElementById('statusFilter').value = '';
+        filterAssignments();
+    });
 }
 
 function updateGrade(courseId, studentId, grade) {
@@ -314,6 +524,103 @@ function loadTeacherName() {
     
     const teacherNameSpan = document.getElementById('teacherName');
     teacherNameSpan.textContent = teacher.profile?.fullName || currentUser.username;
+}
+
+function deleteAssignment(courseId, assignmentId) {
+    const courses = JSON.parse(localStorage.getItem('courses')) || [];
+    const courseIndex = courses.findIndex(c => c.id === courseId);
+    
+    if (courseIndex !== -1) {
+        // Filter out the assignment to delete
+        courses[courseIndex].assignments = courses[courseIndex].assignments.filter(
+            assignment => assignment.id !== assignmentId
+        );
+        
+        // Save updated courses to localStorage
+        localStorage.setItem('courses', JSON.stringify(courses));
+        
+        // Refresh the assignments list
+        loadAssignments();
+    }
+}
+
+function confirmDeleteAssignment(courseId, assignmentId) {
+    const confirmDelete = confirm('Are you sure you want to delete this assignment? This action cannot be undone.');
+    if (confirmDelete) {
+        deleteAssignment(courseId, assignmentId);
+    }
+}
+
+function viewSubmissions(courseId, assignmentId) {
+    const courses = JSON.parse(localStorage.getItem('courses')) || [];
+    const course = courses.find(c => c.id === courseId);
+    const assignment = course?.assignments.find(a => a.id === assignmentId);
+    
+    if (!course || !assignment) return;
+
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('submissionsModal')">&times;</span>
+            <h2>Student Submissions</h2>
+            <div class="submissions-grid">
+                ${createSubmissionCards(course, assignment)}
+            </div>
+        </div>
+    `;
+    modal.id = 'submissionsModal';
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('submissionsModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    document.body.appendChild(modal);
+    modal.style.display = 'block';
+}
+
+function createSubmissionCards(course, assignment) {
+    if (!course.students || course.students.length === 0) {
+        return '<p class="no-submissions">No students enrolled in this course.</p>';
+    }
+
+    // Check if there are any submissions
+    const hasSubmissions = course.students.some(student => 
+        assignment.submissions && assignment.submissions[student.id]
+    );
+
+    if (!hasSubmissions) {
+        return '<p class="no-submissions">No work submitted</p>';
+    }
+
+    return course.students.map(student => {
+        const submission = assignment.submissions?.[student.id];
+        // Skip students who haven't submitted
+        if (!submission) return '';
+        
+        let status = 'ungraded';
+        let statusClass = 'status-ungraded';
+        
+        if (submission.grade) {
+            status = 'graded';
+            statusClass = 'status-graded';
+        } else if (submission.status === 'rejected') {
+            status = 'rejected';
+            statusClass = 'status-rejected';
+        }
+
+        return `
+            <div class="mini-submission-card" 
+                 onclick="window.location.href='submission-teacher.html?courseId=${course.id}&assignmentId=${assignment.id}&studentId=${student.id}'">
+                <div class="student-info">
+                    <span class="student-name">${student.firstName} ${student.lastName}</span>
+                    <span class="submission-status ${statusClass}">${status}</span>
+                </div>
+            </div>
+        `;
+    }).filter(card => card !== '').join('');
 }
 
 

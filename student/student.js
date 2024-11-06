@@ -428,8 +428,34 @@ function filterAssignments() {
             assignmentsList.appendChild(courseSection);
         }
     });
-
     if (!hasAssignments) {
         assignmentsList.innerHTML = '<p style="color: #8b949e; text-align: center;">No assignments available.</p>';
     }
 }
+
+// Add this function to populate the course filter dropdown
+function populateCourseFilter() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const courses = JSON.parse(localStorage.getItem('courses')) || [];
+    const courseFilter = document.getElementById('courseFilter');
+    
+    // Clear existing options except the default "All Courses" option
+    courseFilter.innerHTML = '<option value="">All Courses</option>';
+    
+    // Add enrolled courses to the dropdown
+    courses.forEach(course => {
+        if (course.students?.some(student => student.id === currentUser.id)) {
+            const option = document.createElement('option');
+            option.value = course.id;
+            option.textContent = course.name;
+            courseFilter.appendChild(option);
+        }
+    });
+}
+
+// Add this to your window.onload or wherever you initialize the assignments page
+if (window.location.href.includes('student-assignments.html')) {
+    populateCourseFilter();
+    filterAssignments(); // Your existing filter function
+}
+

@@ -388,6 +388,70 @@
             background-color: rgba(63, 185, 80, 0.1);
             color: #3fb950;
         }
+
+        .filter-section {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .filter-input, .filter-select {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            padding: 0.5rem 1rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .filter-input {
+            flex: 2;
+        }
+
+        .filter-select {
+            flex: 1;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
+
+        .clear-filters-btn {
+            background-color: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .clear-filters-btn:hover {
+            background-color: #30363d;
+            border-color: #58a6ff;
+        }
+
+        .welcome-text {
+            color: #8b949e;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -404,14 +468,29 @@
 
     <div class="assignments-container">
         <div class="assignments-header">
-            <h1>Student Assignments</h1>
-            <div class="filter-container">
-                <select id="courseFilter" onchange="filterAssignments()">
-                    <option value="all">All Courses</option>
-                    <!-- Course options will be added dynamically -->
-                </select>
+            <div>
+                <h1>Assignments</h1>
+                <p class="welcome-text">Welcome, <span id="studentName">Student</span></p>
             </div>
         </div>
+        
+        <div class="filter-section">
+            <div class="filter-group">
+                <input type="text" id="searchFilter" placeholder="Search assignments..." class="filter-input">
+                <select id="courseFilter" class="filter-select">
+                    <option value="">All Courses</option>
+                </select>
+                <select id="statusFilter" class="filter-select">
+                    <option value="">All Statuses</option>
+                    <option value="submitted">Submitted</option>
+                    <option value="pending">Not Submitted</option>
+                    <option value="graded">Graded</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+            <button id="clearFilters" class="clear-filters-btn">Clear Filters</button>
+        </div>
+
         <div id="assignmentsList">
             <!-- Assignments will be dynamically added here -->
         </div>

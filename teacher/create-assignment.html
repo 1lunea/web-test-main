@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Assignment - HMP</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .teacher-nav {
+            background-color: #161b22;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #30363d;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-right {
+            margin-left: auto;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: #c9d1d9;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .nav-button:hover {
+            background-color: #21262d;
+        }
+
+        .nav-button.active {
+            background-color: #21262d;
+            font-weight: 600;
+        }
+
+        .create-assignment-container {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .form-container {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #c9d1d9;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 95%;
+            padding: 0.8rem;
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .form-group textarea {
+            width: 95%;
+            padding: 0.8rem;
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .form-group select {
+            width: 99%;
+            padding: 0.8rem;
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c9d1d9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+            padding-right: 2.5rem;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #58a6ff;
+            box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+        }
+
+        .submit-btn {
+            width: 99%;
+            padding: 1rem;
+            background-color: #238636;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .submit-btn:hover {
+            background-color: #2ea043;
+        }
+
+        .cancel-btn {
+            width: 99%;
+            padding: 1rem;
+            background-color: #21262d;
+            color: #f85149;
+            border: 1px solid #f85149;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            transition: all 0.2s;
+        }
+
+        .cancel-btn:hover {
+            background-color: #ff6b64;
+            color: white;
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+    <nav class="teacher-nav">
+        <div class="nav-left">
+            <button class="nav-button" onclick="window.location.href='teacher-dashboard.html'">Dashboard</button>
+            <button class="nav-button active">Assignments</button>
+            <button class="nav-button" onclick="window.location.href='../forum/forum.html'">Forum</button>
+        </div>
+        <div class="nav-right">
+            <button class="nav-button" onclick="window.location.href='teacher-account.html'">Account</button>
+        </div>
+    </nav>
+
+    <div class="create-assignment-container">
+        <h1>Create Assignment</h1>
+        <div class="form-container">
+            <form id="createAssignmentForm" onsubmit="createAssignment(event)">
+                <div class="form-group">
+                    <label for="assignmentCourse">Course</label>
+                    <select id="assignmentCourse" required>
+                        <!-- Courses will be loaded here -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="assignmentName">Assignment Name</label>
+                    <input type="text" id="assignmentName" required>
+                </div>
+                <div class="form-group">
+                    <label for="assignmentDescription">Description</label>
+                    <textarea id="assignmentDescription" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="assignmentDueDate">Due Date</label>
+                    <input type="datetime-local" id="assignmentDueDate" required>
+                </div>
+                <button type="submit" class="submit-btn">Create Assignment</button>
+                <button type="button" class="cancel-btn" onclick="window.location.href='teacher-assignments.html'">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="create-assignment.js"></script>
+</body>
+</html>
