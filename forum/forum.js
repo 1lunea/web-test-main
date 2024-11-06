@@ -23,10 +23,26 @@ function goBack() {
 
 function getUserTag(user) {
     switch(user.role) {
-        case 'admin': return '<span class="user-tag tag-admin">Admin</span>';
-        case 'teacher': return '<span class="user-tag tag-teacher">Teacher</span>';
-        case 'student': return '<span class="user-tag tag-student">Student</span>';
-        default: return '<span class="user-tag tag-owner">Owner</span>';
+        case 'admin': 
+            return {
+                tag: '<span class="user-tag tag-admin">Admin</span>',
+                color: '#da3633'
+            };
+        case 'teacher': 
+            return {
+                tag: '<span class="user-tag tag-teacher">Teacher</span>',
+                color: '#1f6feb'
+            };
+        case 'student': 
+            return {
+                tag: '<span class="user-tag tag-student">Student</span>',
+                color: '#238636'
+            };
+        default: 
+            return {
+                tag: '<span class="user-tag tag-owner">Owner</span>',
+                color: '#333333'
+            };
     }
 }
 
@@ -42,6 +58,8 @@ function loadPosts() {
         postCard.className = 'post-card';
         postCard.onclick = () => viewPost(post.id);
 
+        const userTagInfo = getUserTag(post.author);
+        
         // Format content preview
         const contentPreview = post.content
             .replace(/\n/g, ' ')
@@ -51,8 +69,8 @@ function loadPosts() {
             <div class="post-header">
                 <div>
                     <div class="post-meta">
-                        <span class="post-author">${post.authorName}</span>
-                        ${getUserTag(post.author)}
+                        <span class="post-author" style="color: ${userTagInfo.color}">${post.authorName}</span>
+                        ${userTagInfo.tag}
                         <span class="post-timestamp">${new Date(post.timestamp).toLocaleString()}</span>
                     </div>
                     <h3 class="post-title">${post.title}</h3>

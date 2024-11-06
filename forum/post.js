@@ -29,12 +29,14 @@ function loadPost() {
 
     document.title = `${post.title} - HMP Forum`;
     
+    const userTagInfo = getUserTag(post.author);
+    
     const postContent = document.getElementById('postContent');
     postContent.innerHTML = `
         <article class="post-card">
             <div class="post-meta">
-                <span class="post-author">${post.authorName}</span>
-                ${getUserTag(post.author)}
+                <span class="post-author" style="color: ${userTagInfo.color}">${post.authorName}</span>
+                ${userTagInfo.tag}
                 <span class="post-timestamp">${new Date(post.timestamp).toLocaleString()}</span>
             </div>
             <h1 class="post-title">${post.title}</h1>
@@ -70,7 +72,7 @@ function loadComments(post) {
             const commentCard = document.createElement('div');
             commentCard.className = 'comment-card';
             
-            // Add delete button if the comment belongs to current user
+            const userTagInfo = getUserTag(comment.author);
             const deleteButton = comment.author.username === currentUser.username ? 
                 `<button class="delete-comment-btn" onclick="deleteComment('${comment.id}')">
                     Delete
@@ -79,8 +81,8 @@ function loadComments(post) {
             commentCard.innerHTML = `
                 <div class="comment-header">
                     <div class="post-meta">
-                        <span class="post-author">${comment.authorName}</span>
-                        ${getUserTag(comment.author)}
+                        <span class="post-author" style="color: ${userTagInfo.color}">${comment.authorName}</span>
+                        ${userTagInfo.tag}
                         <span class="post-timestamp">${new Date(comment.timestamp).toLocaleString()}</span>
                     </div>
                     ${deleteButton}
@@ -163,9 +165,25 @@ setInterval(() => {
 
 function getUserTag(user) {
     switch(user.role) {
-        case 'admin': return '<span class="user-tag tag-admin">Admin</span>';
-        case 'teacher': return '<span class="user-tag tag-teacher">Teacher</span>';
-        case 'student': return '<span class="user-tag tag-student">Student</span>';
-        default: return '<span class="user-tag tag-owner">Owner</span>';
+        case 'admin': 
+            return {
+                tag: '<span class="user-tag tag-admin">Admin</span>',
+                color: '#da3633'
+            };
+        case 'teacher': 
+            return {
+                tag: '<span class="user-tag tag-teacher">Teacher</span>',
+                color: '#1f6feb'
+            };
+        case 'student': 
+            return {
+                tag: '<span class="user-tag tag-student">Student</span>',
+                color: '#238636'
+            };
+        default: 
+            return {
+                tag: '<span class="user-tag tag-owner">Owner</span>',
+                color: '#333333'
+            };
     }
 } 

@@ -819,34 +819,58 @@
         }
 
         .submission-card {
-            background-color: #21262d;
+            background-color: #161b22;
             border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 1.5rem;
+            border-radius: 8px;
             margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .submission-card:hover {
+            transform: translateY(-2px);
+            border-color: #58a6ff;
         }
 
         .submission-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .submission-info {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-right: 2rem;
         }
 
         .student-info {
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            flex-direction: column;
+            gap: 0.25rem;
         }
 
         .student-name {
             color: #c9d1d9;
             font-weight: 500;
+            font-size: 1rem;
         }
 
         .submission-date {
             color: #8b949e;
             font-size: 0.9rem;
+        }
+
+        .view-more {
+            color: #58a6ff;
+        }
+
+        .view-more-icon {
+            font-size: 1.2rem;
         }
 
         .submission-content {
@@ -1212,6 +1236,184 @@
         .form-group textarea:focus {
             border-color: #58a6ff;
             outline: none;
+        }
+
+        .submission-files {
+            margin: 1rem 0;
+            padding: 0.5rem;
+            background-color: #21262d;
+            border-radius: 6px;
+        }
+
+        .file-link {
+            display: inline-flex;
+            align-items: center;
+            color: #58a6ff;
+            text-decoration: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .file-link:hover {
+            background-color: rgba(88, 166, 255, 0.1);
+            text-decoration: underline;
+        }
+
+        .submission-content {
+            margin: 1rem 0;
+            padding: 1rem;
+            background-color: #21262d;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .status-pending {
+            color: #f0883e;
+            background: rgba(240, 136, 62, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .status-rejected {
+            color: #f85149;
+            background: rgba(248, 81, 73, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .status-accepted {
+            color: #3fb950;
+            background: rgba(63, 185, 80, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .grade-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .accept-btn, .reject-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .accept-btn {
+            background-color: #238636;
+            color: white;
+        }
+
+        .accept-btn:hover {
+            background-color: #2ea043;
+        }
+
+        .reject-btn {
+            background-color: #da3633;
+            color: white;
+        }
+
+        .reject-btn:hover {
+            background-color: #f85149;
+        }
+
+        .submission-card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .submission-card:hover {
+            transform: translateY(-2px);
+            border-color: #58a6ff;
+        }
+
+        .submission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .submission-info {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-right: 2rem;
+        }
+
+        .student-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .student-name {
+            color: #c9d1d9;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .submission-date {
+            color: #8b949e;
+            font-size: 0.9rem;
+        }
+
+        .submission-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .view-more {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #58a6ff;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+
+        .view-more-icon {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .submission-card:hover .view-more {
+            opacity: 1;
+        }
+
+        .status-pending {
+            background-color: rgba(240, 136, 62, 0.1);
+            color: #f0883e;
+        }
+
+        .status-rejected {
+            background-color: rgba(248, 81, 73, 0.1);
+            color: #f85149;
+        }
+
+        .status-accepted {
+            background-color: rgba(63, 185, 80, 0.1);
+            color: #3fb950;
         }
     </style>
 </head>
@@ -1614,11 +1816,9 @@
             const course = courses.find(c => c.id === courseId);
             const assignment = course.assignments.find(a => a.id === assignmentId);
 
-            // Set assignment details
             document.getElementById('assignmentName').textContent = assignment.name;
             document.getElementById('assignmentDescription').textContent = assignment.description;
 
-            // Load submissions
             const submissionsList = document.getElementById('submissionsList');
             submissionsList.innerHTML = '';
 
@@ -1629,49 +1829,43 @@
                     submissionCard.className = 'submission-card';
 
                     if (submission) {
+                        const status = submission.status || 'pending';
+                        const statusClass = {
+                            'pending': 'status-pending',
+                            'rejected': 'status-rejected',
+                            'accepted': 'status-accepted'
+                        }[status];
+
                         submissionCard.innerHTML = `
-                            <div class="submission-header">
-                                <div class="student-info">
-                                    <span class="student-name">${student.username}</span>
-                                    <span class="submission-date">
-                                        Submitted: ${new Date(submission.timestamp).toLocaleString()}
-                                    </span>
+                            <div class="submission-header" 
+                                 onclick="window.location.href='submission-teacher.html?courseId=${courseId}&assignmentId=${assignmentId}&studentId=${student.id}'">
+                                <div class="submission-info">
+                                    <div class="student-info">
+                                        <span class="student-name">${student.username}</span>
+                                        <span class="submission-date">
+                                            Submitted: ${new Date(submission.timestamp).toLocaleString()}
+                                        </span>
+                                    </div>
+                                    <div class="submission-status ${statusClass}">
+                                        ${status.charAt(0).toUpperCase() + status.slice(1)}
+                                        ${submission.grade ? ` | Grade: ${submission.grade}/100` : ''}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="submission-content">${submission.content}</div>
-                            ${submission.files ? `
-                                <div class="submission-files">
-                                    ${submission.files.map(file => `
-                                        <a class="submission-file" href="${file.url}" target="_blank">
-                                            ${file.name}
-                                        </a>
-                                    `).join('')}
+                                <div class="view-more">
+                                    <span class="view-more-icon">→</span>
                                 </div>
-                            ` : ''}
-                            <div class="grading-section">
-                                <input 
-                                    type="number" 
-                                    class="grade-input" 
-                                    value="${submission.grade || ''}" 
-                                    placeholder="Grade" 
-                                    min="0" 
-                                    max="100"
-                                >
-                                <button 
-                                    class="save-grade-btn" 
-                                    onclick="saveGrade('${courseId}', '${assignmentId}', '${student.id}', this)">
-                                    Save Grade
-                                </button>
                             </div>
                         `;
                     } else {
                         submissionCard.innerHTML = `
                             <div class="submission-header">
-                                <div class="student-info">
-                                    <span class="student-name">${student.username}</span>
+                                <div class="submission-info">
+                                    <div class="student-info">
+                                        <span class="student-name">${student.username}</span>
+                                    </div>
+                                    <div class="submission-status status-pending">Not Submitted</div>
                                 </div>
                             </div>
-                            <div class="no-submission">No submission yet</div>
                         `;
                     }
 
@@ -1679,11 +1873,34 @@
                 });
             } else {
                 submissionsList.innerHTML = `
-                    <div class="no-submission">No students enrolled in this course</div>
+                    <div class="no-submissions">No students enrolled in this course</div>
                 `;
             }
 
             modal.style.display = 'block';
+        }
+
+        function rejectSubmission(courseId, assignmentId, studentId) {
+            const reason = prompt('Please provide a reason for rejection:');
+            if (reason === null) return; // User cancelled
+
+            updateSubmissionStatus(courseId, assignmentId, studentId, 'rejected', reason);
+        }
+
+        function updateSubmissionStatus(courseId, assignmentId, studentId, status, reason = '') {
+            const courses = JSON.parse(localStorage.getItem('courses')) || [];
+            const courseIndex = courses.findIndex(c => c.id === courseId);
+            const assignment = courses[courseIndex].assignments.find(a => a.id === assignmentId);
+            
+            if (assignment.submissions?.[studentId]) {
+                assignment.submissions[studentId].status = status;
+                if (reason) {
+                    assignment.submissions[studentId].rejectionReason = reason;
+                }
+                
+                localStorage.setItem('courses', JSON.stringify(courses));
+                openGradeModal(courseId, assignmentId); // Refresh the modal
+            }
         }
 
         function saveGrade(courseId, assignmentId, studentId, button) {

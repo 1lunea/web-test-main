@@ -265,13 +265,15 @@ function submitAssignment(event) {
                     name: submissionFile.name,
                     url: URL.createObjectURL(submissionFile)
                 } : null,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                status: 'pending' // Reset status to pending for new submissions
             };
             
             localStorage.setItem('courses', JSON.stringify(courses));
             closeModal('submissionModal');
             document.getElementById('submissionForm').reset();
-            loadAssignments();
+            document.getElementById('selectedFile').textContent = 'No file selected';
+            filterAssignments();
         }
     }
 }
@@ -301,6 +303,11 @@ function loadCourseFilter() {
         option.textContent = course.name;
         courseFilter.appendChild(option);
     });
+}
+
+function isOverdue(dueDate) {
+    if (!dueDate) return false;
+    return new Date(dueDate) < new Date();
 }
 
 function filterAssignments() {
@@ -336,23 +343,62 @@ function filterAssignments() {
             assignmentsGrid.className = 'assignments-grid';
 
             course.assignments.forEach(assignment => {
-                const isSubmitted = assignment.submissions?.[currentUser.id];
-                const statusClass = isSubmitted ? 'status-submitted' : 'status-pending';
-                const statusText = isSubmitted ? 'Submitted' : 'Pending';
-                
+                const submission = assignment.submissions?.[currentUser.id];
+                const isSubmitted = submission !== undefined;
+                let statusClass, statusText;
+
+                if (isSubmitted) {
+                    switch(submission.status) {
+                        case 'rejected':
+                            statusClass = 'status-rejected';
+                            statusText = 'Rejected';
+                            break;
+                        case 'accepted':
+                            statusClass = 'status-accepted';
+                            statusText = 'Accepted';
+                            break;
+                        default:
+                            statusClass = 'status-pending';
+                            statusText = 'Pending Review';
+                    }
+                } else {
+                    statusClass = 'status-pending';
+                    statusText = 'Not Submitted';
+                }
+
                 const assignmentCard = document.createElement('div');
                 assignmentCard.className = 'assignment-card';
                 assignmentCard.innerHTML = `
                     <h4>${assignment.name}</h4>
-                    <p>${assignment.description}</p>
-                    <div class="assignment-date">
-                        Posted: ${new Date(assignment.dateCreated).toLocaleDateString()}
+                    <div class="assignment-content">
+                        <p>${assignment.description || 'No description provided'}</p>
+                        ${assignment.content ? `<div class="assignment-details">${assignment.content}</div>` : ''}
+                    </div>
+                    <div class="assignment-dates">
+                        <div class="date-item">
+                            <span class="date-label">Posted:</span>
+                            <span class="date-value">${new Date(assignment.dateCreated).toLocaleDateString()}</span>
+                        </div>
+                        <div class="date-item">
+                            <span class="date-label">Due:</span>
+                            <span class="date-value ${isOverdue(assignment.dueDate) ? 'overdue' : ''}">${formatDueDate(assignment.dueDate)}</span>
+                        </div>
                     </div>
                     <span class="assignment-status ${statusClass}">${statusText}</span>
-                    ${!isSubmitted ? `
+                    ${submission?.grade ? `
+                        <div class="grade-display">
+                            Grade: ${submission.grade}/100
+                        </div>
+                    ` : ''}
+                    ${submission?.rejectionReason ? `
+                        <div class="rejection-reason">
+                            Rejection Reason: ${submission.rejectionReason}
+                        </div>
+                    ` : ''}
+                    ${(!isSubmitted || submission?.status === 'rejected') ? `
                         <button class="submit-btn" 
                                 onclick="openSubmissionModal('${course.id}', '${assignment.id}')">
-                            Submit Assignment
+                            ${isSubmitted ? 'Resubmit' : 'Submit'} Assignment
                         </button>
                     ` : ''}
                 `;
@@ -367,4 +413,16 @@ function filterAssignments() {
     if (!hasAssignments) {
         assignmentsList.innerHTML = '<p style="color: #8b949e; text-align: center;">No assignments available.</p>';
     }
+}
+
+// Add this helper function for formatting dates
+function formatDueDate(dueDate) {
+    if (!dueDate) return 'No due date set';
+    return new Date(dueDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
 }
