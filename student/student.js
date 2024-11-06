@@ -305,9 +305,28 @@ function loadCourseFilter() {
     });
 }
 
-function isOverdue(dueDate) {
-    if (!dueDate) return false;
-    return new Date(dueDate) < new Date();
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Invalid Date';
+    
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    
+    return `${day}/${month}/${year}`;
+}
+
+function formatDueDate(dateString) {
+    if (!dateString) return 'No due date';
+    return formatDate(dateString);
+}
+
+function isOverdue(dateString) {
+    if (!dateString) return false;
+    const dueDate = new Date(dateString);
+    if (isNaN(dueDate.getTime())) return false;
+    return new Date() > dueDate;
 }
 
 function filterAssignments() {
@@ -337,7 +356,7 @@ function filterAssignments() {
             hasAssignments = true;
             const courseSection = document.createElement('div');
             courseSection.className = 'course-section';
-            courseSection.innerHTML = `<h3>${course.name}</h3>`;
+            courseSection.innerHTML = `<h3>${course.name || 'Unnamed Course'}</h3>`;
             
             const assignmentsGrid = document.createElement('div');
             assignmentsGrid.className = 'assignments-grid';
@@ -369,7 +388,7 @@ function filterAssignments() {
                 const assignmentCard = document.createElement('div');
                 assignmentCard.className = 'assignment-card';
                 assignmentCard.innerHTML = `
-                    <h4>${assignment.name}</h4>
+                    <h4>${assignment.name || 'Untitled Assignment'}</h4>
                     <div class="assignment-content">
                         <p>${assignment.description || 'No description provided'}</p>
                         ${assignment.content ? `<div class="assignment-details">${assignment.content}</div>` : ''}
@@ -377,7 +396,7 @@ function filterAssignments() {
                     <div class="assignment-dates">
                         <div class="date-item">
                             <span class="date-label">Posted:</span>
-                            <span class="date-value">${new Date(assignment.dateCreated).toLocaleDateString()}</span>
+                            <span class="date-value">${formatDate(assignment.dateCreated)}</span>
                         </div>
                         <div class="date-item">
                             <span class="date-label">Due:</span>
@@ -413,16 +432,4 @@ function filterAssignments() {
     if (!hasAssignments) {
         assignmentsList.innerHTML = '<p style="color: #8b949e; text-align: center;">No assignments available.</p>';
     }
-}
-
-// Add this helper function for formatting dates
-function formatDueDate(dueDate) {
-    if (!dueDate) return 'No due date set';
-    return new Date(dueDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
 }
