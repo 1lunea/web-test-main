@@ -219,10 +219,69 @@
         .back-button:hover {
             transform: translateX(-2px);
         }
+
+        .nav {
+            background-color: #161b22;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #30363d;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-right {
+            margin-left: auto;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: #c9d1d9;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .nav-button:hover {
+            background-color: #21262d;
+        }
+
+        .nav-button.active {
+            background-color: #21262d;
+            font-weight: 600;
+        }
+
+        /* Remove the old back button styles */
+        .back-button {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <a href="../index.html" class="back-button">← Back to Home</a>
+    <nav class="nav">
+        <div class="nav-left">
+            <button class="nav-button active">Admin Panel</button>
+            <button class="nav-button" onclick="window.location.href='../courses/courses-dashboard.html'">E-Courses</button>
+            <button class="nav-button" onclick="window.location.href='../forum/forum.html'">Forum</button>
+        </div>
+        <div class="nav-right">
+            <button class="nav-button" id="accountButton">Account</button>
+        </div>
+    </nav>
+
     <div class="admin-container">
         <div class="admin-header">
             <div>
@@ -244,7 +303,6 @@
                 <div class="admin-buttons">
                     <button id="deleteAllBtn" class="delete-all-btn">Delete All Users</button>
                     <button onclick="window.location.href='add-admin.html'" class="add-admin-btn">Add Moderator</button>
-                    <button onclick="window.location.href='../forum/forum.html'" class="forum-btn">Moderate Forum</button>
                 </div>
             </div>
             <input type="text" id="searchInput" class="search-bar" placeholder="Search users...">

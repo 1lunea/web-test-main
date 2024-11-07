@@ -2,6 +2,9 @@ window.onload = function() {
     // Check admin authentication first
     checkAdminAuth();
     
+    // Set up account button navigation
+    setupAccountButton();
+    
     // Then load users and set up event listeners
     loadUsers();
     document.getElementById('searchInput').addEventListener('input', filterUsers);
@@ -175,4 +178,13 @@ function updateStats() {
         users.filter(user => user.role === 'student').length;
     document.getElementById('totalTeachers').textContent = 
         users.filter(user => user.role === 'teacher').length;
+}
+
+function setupAccountButton() {
+    const accountButton = document.getElementById('accountButton');
+    if (accountButton) {
+        accountButton.addEventListener('click', () => {
+            window.location.href = 'admin-account.html';
+        });
+    }
 }

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Dashboard - HMP</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <style>
+        .courses-container {
+            margin-top: 80px;
+            padding: 2rem;
+        }
+
+        .courses-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .create-course-btn {
+            background-color: #238636;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: none; /* Hidden by default, shown for admins/mods */
+        }
+
+        .create-course-btn:hover {
+            background-color: #2ea043;
+        }
+
+        .filter-section {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            width: 95%;
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .category-filter {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .category-filter.coding {
+            background-color: rgba(35, 134, 54, 0.1);
+            color: #2ea043;
+            border-color: rgba(35, 134, 54, 0.2);
+        }
+
+        .category-filter.math {
+            background-color: rgba(88, 166, 255, 0.1);
+            color: #58a6ff;
+            border-color: rgba(88, 166, 255, 0.2);
+        }
+
+        .category-filter.physics {
+            background-color: rgba(248, 81, 73, 0.1);
+            color: #f85149;
+            border-color: rgba(248, 81, 73, 0.2);
+        }
+
+        .category-filter.chemistry {
+            background-color: rgba(240, 136, 62, 0.1);
+            color: #f0883e;
+            border-color: rgba(240, 136, 62, 0.2);
+        }
+
+        .category-filter.biology {
+            background-color: rgba(163, 113, 247, 0.1);
+            color: #a371f7;
+            border-color: rgba(163, 113, 247, 0.2);
+        }
+
+        .category-filter:hover, .category-filter.active {
+            transform: translateY(-2px);
+            filter: brightness(1.2);
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .course-card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .course-category {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .course-title {
+            color: #c9d1d9;
+            margin: 0 0 1rem 0;
+            font-size: 1.2rem;
+        }
+
+        .course-description {
+            color: #8b949e;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .course-stats {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 1px solid #30363d;
+            color: #8b949e;
+            font-size: 0.9rem;
+        }
+
+        .nav {
+            background-color: #161b22;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #30363d;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-right {
+            margin-left: auto;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: #c9d1d9;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .nav-button:hover {
+            background-color: #21262d;
+        }
+
+        .nav-button.active {
+            background-color: #21262d;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="courses-container">
+        <div class="courses-header">
+            <h1>Online E-Courses</h1>
+            <button class="create-course-btn" id="createCourseBtn">Create Course</button>
+        </div>
+
+        <div class="filter-section">
+            <input type="text" class="search-bar" placeholder="Search courses..." id="searchInput">
+            <div class="category-filters">
+                <button class="category-filter coding" data-category="coding">Coding</button>
+                <button class="category-filter math" data-category="math">Mathematics</button>
+                <button class="category-filter physics" data-category="physics">Physics</button>
+                <button class="category-filter chemistry" data-category="chemistry">Chemistry</button>
+                <button class="category-filter biology" data-category="biology">Biology</button>
+            </div>
+        </div>
+
+        <div class="courses-grid" id="coursesGrid">
+            <!-- Courses will be dynamically added here -->
+        </div>
+    </div>
+
+    <nav class="nav">
+        <div class="nav-left">
+            <button class="nav-button" id="backToDashboard">← Back</button>
+            <button class="nav-button active">E-Courses</button>
+            <button class="nav-button" onclick="window.location.href='../forum/forum.html'">Forum</button>
+        </div>
+        <div class="nav-right">
+            <button class="nav-button" id="accountButton">Account</button>
+        </div>
+    </nav>
+
+    <script src="courses.js"></script>
+    <script>
+        function checkAuth() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser || !['student', 'teacher', 'admin'].includes(currentUser.role)) {  // Add admin to allowed roles
+                window.location.href = '../login-signup.html';
+                return;
+            }
+            
+            const createCourseBtn = document.getElementById('createCourseBtn');
+            if (currentUser.role === 'teacher' || currentUser.role === 'admin') {  // Allow admin to create courses
+                createCourseBtn.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html> 

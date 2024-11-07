@@ -1,5 +1,6 @@
 window.onload = function() {
     checkAuth();
+    setupNavigation();
     loadPosts();
 };
 
@@ -10,14 +11,26 @@ function checkAuth() {
     }
 }
 
-function goBack() {
+function setupNavigation() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) {
+        window.location.href = '../login-signup.html';
+        return;
+    }
+
+    // Set up the back button and account button
+    const backButton = document.getElementById('backButton');
+    const accountButton = document.getElementById('accountButton');
+    
     if (currentUser.role === 'teacher') {
-        window.location.href = '../teacher/teacher-dashboard.html';
+        backButton.onclick = () => window.location.href = '../teacher/teacher-dashboard.html';
+        accountButton.onclick = () => window.location.href = '../teacher/teacher-account.html';
     } else if (currentUser.role === 'student') {
-        window.location.href = '../student/student-dashboard.html';
+        backButton.onclick = () => window.location.href = '../student/student-dashboard.html';
+        accountButton.onclick = () => window.location.href = '../student/student-account.html';
     } else if (currentUser.role === 'admin') {
-        window.location.href = '../admin/admin-panel.html';
+        backButton.onclick = () => window.location.href = '../admin/admin-panel.html';
+        accountButton.onclick = () => window.location.href = '../admin/admin-account.html';
     }
 }
 
@@ -46,6 +59,11 @@ function getUserTag(user) {
     }
 }
 
+function getCurrentUserId() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    return currentUser ? currentUser.username : null;
+}
+
 function loadPosts() {
     const posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
     const postsList = document.getElementById('postsList');
@@ -58,13 +76,7 @@ function loadPosts() {
         postCard.className = 'post-card';
 
         const userTagInfo = getUserTag(post.author);
-        
-        // Add admin delete button if user is admin
-        const adminControls = isAdmin() ? `
-            <button onclick="event.stopPropagation(); deletePost('${post.id}')" class="mod-delete-btn">
-                Delete Post
-            </button>
-        ` : '';
+        const currentUserId = getCurrentUserId();
         
         postCard.innerHTML = `
             <div class="post-header">
@@ -73,7 +85,9 @@ function loadPosts() {
                         <span class="post-author" style="color: ${userTagInfo.color}">${post.authorName}</span>
                         ${userTagInfo.tag}
                         <span class="post-timestamp">${new Date(post.timestamp).toLocaleString()}</span>
-                        ${adminControls}
+                        ${(isAdmin() || currentUserId === post.author.username) ? 
+                            `<button class="delete-btn">Delete Post</button>` : 
+                            ''}
                     </div>
                     <h3 class="post-title">${post.title}</h3>
                 </div>
@@ -83,10 +97,45 @@ function loadPosts() {
                 <span class="comment-count">${post.comments?.length || 0} comments</span>
             </div>
         `;
+
+        // Add click event for the entire post card
+        postCard.addEventListener('click', (e) => {
+            // Only navigate if we didn't click the delete button
+            if (!e.target.classList.contains('delete-btn')) {
+                viewPost(post.id);
+            }
+        });
+
+        // Add separate click handler for delete button
+        const deleteBtn = postCard.querySelector('.delete-btn');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', (e) => {
+                e.preventDefault();  // Prevent any default button behavior
+                e.stopPropagation(); // Prevent the click from triggering the post card click
+                handleDeletePost(post.id);
+            });
+        }
         
-        postCard.onclick = () => viewPost(post.id);
         postsList.appendChild(postCard);
     });
+}
+
+function handleDeletePost(postId) {
+    const currentUserId = getCurrentUserId();
+    const posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
+    const post = posts.find(p => p.id === postId);
+    
+    // Check if user has permission to delete
+    if (!post || (!isAdmin() && currentUserId !== post.author.username)) {
+        alert('You do not have permission to delete this post.');
+        return;
+    }
+    
+    if (confirm('Are you sure you want to delete this post?')) {
+        const updatedPosts = posts.filter(p => p.id !== postId);
+        localStorage.setItem('forumPosts', JSON.stringify(updatedPosts));
+        loadPosts(); // Refresh the display
+    }
 }
 
 function openCreatePostModal() {
@@ -224,13 +273,20 @@ function displayComments(postId, comments) {
 }
 
 function deletePost(postId) {
-    if (!isAdmin()) return;
+    const currentUserId = getCurrentUserId();
+    const posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
+    const post = posts.find(p => p.id === postId);
     
-    if (confirm('Are you sure you want to delete this post and all its comments?')) {
-        const posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
-        const updatedPosts = posts.filter(post => post.id !== postId);
+    // Check if user has permission to delete
+    if (!post || (!isAdmin() && currentUserId !== post.author.username)) {
+        alert('You do not have permission to delete this post.');
+        return;
+    }
+    
+    if (confirm('Are you sure you want to delete this post?')) {
+        const updatedPosts = posts.filter(p => p.id !== postId);
         localStorage.setItem('forumPosts', JSON.stringify(updatedPosts));
-        window.location.reload(); // Reload the page to show changes
+        loadPosts(); // Refresh the display
     }
 }
 
@@ -249,6 +305,57 @@ function deleteComment(postId, commentId) {
             
             localStorage.setItem('forumPosts', JSON.stringify(posts));
             loadPosts(); // Refresh the display
+        }
+    }
+}
+
+function createPostElement(post) {
+    const postElement = document.createElement('div');
+    postElement.className = 'post-card';
+    
+    // Get current user's ID (you should have this from your auth system)
+    const currentUserId = getCurrentUserId(); // Implement this based on your auth system
+    
+    const deleteButton = post.authorId === currentUserId 
+        ? `<button class="delete-btn" onclick="deletePost(event, '${post.id}')">Delete</button>`
+        : '';
+
+    postElement.innerHTML = `
+        <div class="post-meta">
+            <span class="post-author">${post.author}</span>
+            <span class="post-timestamp">${formatTimestamp(post.timestamp)}</span>
+            ${deleteButton}
+        </div>
+        <h3 class="post-title">${post.title}</h3>
+        // ... rest of post content ...
+    `;
+
+    return postElement;
+}
+
+async function deletePost(event, postId) {
+    event.stopPropagation(); // Prevent post click event from triggering
+    
+    if (confirm('Are you sure you want to delete this post?')) {
+        try {
+            const response = await fetch(`/api/posts/${postId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Include any authentication headers your API requires
+                }
+            });
+
+            if (response.ok) {
+                // Remove the post from the UI
+                const postElement = event.target.closest('.post-card');
+                postElement.remove();
+            } else {
+                throw new Error('Failed to delete post');
+            }
+        } catch (error) {
+            console.error('Error deleting post:', error);
+            alert('Failed to delete post. Please try again.');
         }
     }
 } 
