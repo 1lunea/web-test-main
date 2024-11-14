@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <style>
         .courses-container {
             margin-top: 80px;
@@ -121,6 +123,7 @@
             border-radius: 12px;
             padding: 1.5rem;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .course-card:hover {
@@ -146,6 +149,11 @@
             color: #8b949e;
             font-size: 0.9rem;
             margin-bottom: 1rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
         }
 
         .course-stats {
@@ -200,13 +208,112 @@
             background-color: #21262d;
             font-weight: 600;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1001;
+        }
+
+        .modal-content {
+            background-color: #0d1117;
+            margin: 5% auto;
+            padding: 2rem;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 800px;
+        }
+
+        .modal-content input {
+            width: 95%;
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .modal-content select {
+            width: 20%;
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-family: 'IBM Plex Mono', monospace;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c9d1d9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+            padding-right: 2.5rem;
+        }
+
+        .modal-content select:hover {
+            border-color: #58a6ff;
+        }
+
+        #editor {
+            height: 300px;
+            margin-bottom: 1rem;
+            background-color: #161b22;
+            border-radius: 6px;
+        }
+
+        .ql-toolbar {
+            background-color: #21262d;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            border-color: #30363d !important;
+        }
+
+        .ql-container {
+            border-color: #30363d !important;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .cancel-btn {
+            background-color: #21262d;
+            color: #c9d1d9;
+        }
+
+        .submit-btn {
+            background-color: #238636;
+            color: white;
+        }
+
+        .cancel-btn,
+        .submit-btn {
+            padding: 0.8rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+        }
     </style>
 </head>
 <body>
     <div class="courses-container">
         <div class="courses-header">
             <h1>Online E-Courses</h1>
-            <button class="create-course-btn" id="createCourseBtn">Create Course</button>
+            <button class="create-course-btn" id="createECourseBtn">Create E-Course</button>
         </div>
 
         <div class="filter-section">
@@ -222,6 +329,27 @@
 
         <div class="courses-grid" id="coursesGrid">
             <!-- Courses will be dynamically added here -->
+        </div>
+
+        <div id="createCourseModal" class="modal">
+            <div class="modal-content">
+                <h2>Create New Course</h2>
+                <form id="createCourseForm">
+                    <select id="courseCategory" required>
+                        <option value="coding">Coding</option>
+                        <option value="math">Mathematics</option>
+                        <option value="physics">Physics</option>
+                        <option value="chemistry">Chemistry</option>
+                        <option value="biology">Biology</option>
+                    </select>
+                    <input type="text" id="courseName" placeholder="Course Name" required>
+                    <div id="editor"></div>
+                    <div class="modal-buttons">
+                        <button type="button" class="cancel-btn" id="cancelCreate">Cancel</button>
+                        <button type="submit" class="submit-btn">Create Course</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -240,14 +368,14 @@
     <script>
         function checkAuth() {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser || !['student', 'teacher', 'admin'].includes(currentUser.role)) {  // Add admin to allowed roles
+            if (!currentUser || !['student', 'teacher', 'admin', 'moderator'].includes(currentUser.role)) {
                 window.location.href = '../login-signup.html';
                 return;
             }
             
-            const createCourseBtn = document.getElementById('createCourseBtn');
-            if (currentUser.role === 'teacher' || currentUser.role === 'admin') {  // Allow admin to create courses
-                createCourseBtn.style.display = 'block';
+            const createECourseBtn = document.getElementById('createECourseBtn');
+            if (currentUser.role === 'admin' || currentUser.role === 'moderator') {
+                createECourseBtn.style.display = 'block';
             }
         }
     </script>

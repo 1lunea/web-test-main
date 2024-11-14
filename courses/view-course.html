@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Course - HMP</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <style>
+        .course-container {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .course-header {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .course-category {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .course-category.coding {
+            background-color: rgba(35, 134, 54, 0.1);
+            color: #2ea043;
+        }
+
+        .course-category.math {
+            background-color: rgba(88, 166, 255, 0.1);
+            color: #58a6ff;
+        }
+
+        .course-category.physics {
+            background-color: rgba(248, 81, 73, 0.1);
+            color: #f85149;
+        }
+
+        .course-category.chemistry {
+            background-color: rgba(240, 136, 62, 0.1);
+            color: #f0883e;
+        }
+
+        .course-category.biology {
+            background-color: rgba(163, 113, 247, 0.1);
+            color: #a371f7;
+        }
+
+        .course-title {
+            font-size: 2rem;
+            color: #c9d1d9;
+            margin: 1rem 0;
+        }
+
+        .course-meta {
+            color: #8b949e;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .course-content {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .course-description {
+            color: #c9d1d9;
+            line-height: 1.6;
+        }
+
+        .course-description img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .course-description iframe {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 1rem 0;
+            aspect-ratio: 16/9;
+        }
+
+        .enroll-button {
+            background-color: #238636;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .enroll-button:hover {
+            background-color: #2ea043;
+        }
+
+        .enrolled {
+            background-color: #21262d;
+            cursor: not-allowed;
+        }
+
+        .enrolled:hover {
+            background-color: #21262d;
+        }
+
+        .nav {
+            background-color: #161b22;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #30363d;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-right {
+            margin-left: auto;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: #c9d1d9;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .nav-button:hover {
+            background-color: #21262d;
+        }
+
+        .nav-button.active {
+            background-color: #21262d;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="course-container">
+        <div class="course-header">
+            <span id="courseCategory" class="course-category">Category</span>
+            <h1 id="courseTitle" class="course-title">Course Title</h1>
+            <div class="course-meta">
+                <span id="courseStudents">0 students enrolled</span>
+                <span id="courseDate">Created on: </span>
+            </div>
+            <button id="enrollButton" class="enroll-button">Enroll Now</button>
+        </div>
+
+        <div class="course-content">
+            <div id="courseDescription" class="course-description">
+                <!-- Course content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <nav class="nav">
+        <div class="nav-left">
+            <button class="nav-button" id="backToDashboard">← Back to E-Courses</button>
+        </div>
+        <div class="nav-right">
+            <button class="nav-button" id="accountButton">Account</button>
+        </div>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const courseId = urlParams.get('id');
+            
+            // Load course data
+            const courses = JSON.parse(localStorage.getItem('courses')) || [];
+            const course = courses.find(c => c.id === courseId);
+            
+            if (!course) {
+                window.location.href = 'courses-dashboard.html';
+                return;
+            }
+
+            // Update UI with course data
+            document.title = `${course.name} - HMP`;
+            document.getElementById('courseCategory').className = `course-category ${course.category}`;
+            document.getElementById('courseCategory').textContent = course.category;
+            document.getElementById('courseTitle').textContent = course.name;
+            document.getElementById('courseStudents').textContent = `${course.students?.length || 0} students enrolled`;
+            document.getElementById('courseDate').textContent = `Created on: ${new Date(course.createdAt).toLocaleDateString()}`;
+            document.getElementById('courseDescription').innerHTML = course.description;
+
+            // Setup navigation
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const dashboardButton = document.getElementById('backToDashboard');
+            const accountButton = document.getElementById('accountButton');
+            
+            // Set back button to return to courses dashboard
+            dashboardButton.onclick = () => window.location.href = 'courses-dashboard.html';
+            
+            // Setup account button based on role
+            switch(currentUser.role) {
+                case 'teacher':
+                    accountButton.onclick = () => window.location.href = '../teacher/teacher-account.html';
+                    break;
+                case 'student':
+                    accountButton.onclick = () => window.location.href = '../student/student-account.html';
+                    break;
+                case 'admin':
+                    accountButton.onclick = () => window.location.href = '../admin/admin-account.html';
+                    break;
+                case 'moderator':
+                    accountButton.onclick = () => window.location.href = '../moderator/moderator-account.html';
+                    break;
+            }
+
+            // Handle enrollment
+            const enrollButton = document.getElementById('enrollButton');
+            
+            if (course.students?.includes(currentUser.id)) {
+                enrollButton.textContent = 'Enrolled';
+                enrollButton.classList.add('enrolled');
+            } else {
+                enrollButton.addEventListener('click', () => {
+                    // Add student to course
+                    course.students = course.students || [];
+                    course.students.push(currentUser.id);
+                    
+                    // Update courses in localStorage
+                    const courseIndex = courses.findIndex(c => c.id === courseId);
+                    courses[courseIndex] = course;
+                    localStorage.setItem('courses', JSON.stringify(courses));
+                    
+                    // Update button
+                    enrollButton.textContent = 'Enrolled';
+                    enrollButton.classList.add('enrolled');
+                    document.getElementById('courseStudents').textContent = `${course.students.length} students enrolled`;
+                });
+            }
+        });
+    </script>
+</body>
+</html>
