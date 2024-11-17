@@ -31,31 +31,38 @@
             border-radius: 20px;
             font-size: 0.8rem;
             margin-bottom: 1rem;
+            border: 1px solid transparent;
+            transition: all 0.2s;
         }
 
         .course-category.coding {
             background-color: rgba(35, 134, 54, 0.1);
             color: #2ea043;
+            border-color: rgba(35, 134, 54, 0.2);
         }
 
         .course-category.math {
             background-color: rgba(88, 166, 255, 0.1);
             color: #58a6ff;
+            border-color: rgba(88, 166, 255, 0.2);
         }
 
         .course-category.physics {
             background-color: rgba(248, 81, 73, 0.1);
             color: #f85149;
+            border-color: rgba(248, 81, 73, 0.2);
         }
 
         .course-category.chemistry {
             background-color: rgba(240, 136, 62, 0.1);
             color: #f0883e;
+            border-color: rgba(240, 136, 62, 0.2);
         }
 
         .course-category.biology {
             background-color: rgba(163, 113, 247, 0.1);
             color: #a371f7;
+            border-color: rgba(163, 113, 247, 0.2);
         }
 
         .course-title {
@@ -166,6 +173,11 @@
             background-color: #21262d;
             font-weight: 600;
         }
+
+        /* Optional hover effect */
+        .course-category:hover {
+            filter: brightness(1.1);
+        }
     </style>
 </head>
 <body>
@@ -211,10 +223,10 @@
             }
 
             // Update UI with course data
-            document.title = `${course.name} - HMP`;
+            document.title = `${capitalize(course.name)} - HMP`;
             document.getElementById('courseCategory').className = `course-category ${course.category}`;
-            document.getElementById('courseCategory').textContent = course.category;
-            document.getElementById('courseTitle').textContent = course.name;
+            document.getElementById('courseCategory').textContent = capitalize(course.category);
+            document.getElementById('courseTitle').textContent = capitalize(course.name);
             document.getElementById('courseStudents').textContent = `${course.students?.length || 0} students enrolled`;
             document.getElementById('courseDate').textContent = `Created on: ${new Date(course.createdAt).toLocaleDateString()}`;
             document.getElementById('courseDescription').innerHTML = course.description;
@@ -267,6 +279,10 @@
                 });
             }
         });
+
+        function capitalize(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+        }
     </script>
 </body>
 </html>

@@ -612,12 +612,25 @@ function createSubmissionCards(course, assignment) {
         }
 
         return `
-            <div class="mini-submission-card" 
-                 onclick="window.location.href='submission-teacher.html?courseId=${course.id}&assignmentId=${assignment.id}&studentId=${student.id}'">
-                <div class="student-info">
-                    <span class="student-name">${student.firstName} ${student.lastName}</span>
+            <div class="submission-card">
+                <div class="submission-header">
+                    <span class="student-name">${student.username || 'Unknown Student'}</span>
                     <span class="submission-status ${statusClass}">${status}</span>
                 </div>
+                <div class="submission-details">
+                    <div class="submission-time">
+                        Submitted: ${new Date(submission.timestamp).toLocaleString()}
+                    </div>
+                    ${submission.text ? `
+                        <div class="submission-text">
+                            ${submission.text.substring(0, 100)}${submission.text.length > 100 ? '...' : ''}
+                        </div>
+                    ` : ''}
+                </div>
+                <button class="view-submission-btn" 
+                        onclick="window.location.href='submission-teacher.html?courseId=${course.id}&assignmentId=${assignment.id}&studentId=${student.id}'">
+                    View Details
+                </button>
             </div>
         `;
     }).filter(card => card !== '').join('');

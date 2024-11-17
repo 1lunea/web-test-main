@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moderator Account - HMP</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        /* Copy the relevant styles from admin-account.html */
+        /* ... */
+    </style>
+</head>
+<body>
+    <nav class="admin-nav">
+        <div class="nav-left">
+            <button class="nav-button" onclick="window.location.href='mod-panel.html'">Mod Panel</button>
+            <button class="nav-button" onclick="window.location.href='../courses/courses-dashboard.html'">E-Courses</button>
+            <button class="nav-button" onclick="window.location.href='../forum/forum.html'">Forum</button>
+        </div>
+        <div class="nav-right">
+            <button class="nav-button active">Account</button>
+        </div>
+    </nav>
+
+    <div class="profile-container">
+        <div class="profile-info">
+            <h2>Profile Information</h2>
+            <div class="info-group">
+                <label>ID:</label>
+                <span id="modId"></span>
+            </div>
+            <div class="info-group">
+                <label>Username:</label>
+                <span id="modUsername"></span>
+                <span class="owner-badge">Moderator</span>
+            </div>
+            <div class="info-group">
+                <label>Full Name:</label>
+                <span id="modName"></span>
+            </div>
+            <div class="info-group">
+                <label>Email:</label>
+                <span id="modEmail"></span>
+            </div>
+            <div class="info-group">
+                <label>Role:</label>
+                <span id="modRole"></span>
+            </div>
+        </div>
+        <div class="button-container">
+            <button onclick="signOut()" class="sign-out-btn">Sign Out</button>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            checkModAuth();
+            loadModProfile();
+        };
+
+        function checkModAuth() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser || currentUser.role !== 'mod') {
+                window.location.href = '../login-signup.html';
+            }
+        }
+
+        function loadModProfile() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (currentUser && currentUser.profile) {
+                document.getElementById('modId').textContent = currentUser.profile.id;
+                document.getElementById('modUsername').textContent = currentUser.username;
+                document.getElementById('modName').textContent = currentUser.profile.fullName;
+                document.getElementById('modEmail').textContent = currentUser.profile.email;
+                document.getElementById('modRole').textContent = currentUser.role;
+            }
+        }
+
+        function signOut() {
+            if (confirm('Are you sure you want to sign out?')) {
+                localStorage.removeItem('currentUser');
+                window.location.href = '../login-signup.html';
+            }
+        }
+    </script>
+</body>
+</html>

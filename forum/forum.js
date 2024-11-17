@@ -309,28 +309,98 @@ function deleteComment(postId, commentId) {
     }
 }
 
+function checkUserPermissions() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) return { canPost: false, canModerate: false };
+
+    return {
+        canPost: true, // All logged-in users can post
+        canModerate: currentUser.role === 'admin' || currentUser.role === 'mod' // Both admins and mods can moderate
+    };
+}
+
 function createPostElement(post) {
+    const { canModerate } = checkUserPermissions();
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    
     const postElement = document.createElement('div');
-    postElement.className = 'post-card';
+    postElement.className = 'post';
+    postElement.id = `post-${post.id}`;
     
-    // Get current user's ID (you should have this from your auth system)
-    const currentUserId = getCurrentUserId(); // Implement this based on your auth system
+    // Get user role badge
+    const roleBadge = getRoleBadge(post.authorRole);
     
-    const deleteButton = post.authorId === currentUserId 
-        ? `<button class="delete-btn" onclick="deletePost(event, '${post.id}')">Delete</button>`
-        : '';
-
     postElement.innerHTML = `
-        <div class="post-meta">
-            <span class="post-author">${post.author}</span>
-            <span class="post-timestamp">${formatTimestamp(post.timestamp)}</span>
-            ${deleteButton}
+        <div class="post-header">
+            <div class="post-info">
+                <span class="post-author">${post.author}</span>
+                ${roleBadge}
+                <span class="post-date">${new Date(post.timestamp).toLocaleString()}</span>
+            </div>
+            ${(canModerate || currentUser?.username === post.author) ? `
+                <button class="delete-post-btn" onclick="deletePost('${post.id}')">
+                    <span class="delete-icon">🗑️</span>
+                </button>
+            ` : ''}
         </div>
-        <h3 class="post-title">${post.title}</h3>
-        // ... rest of post content ...
+        <div class="post-content">${post.content}</div>
+        <div class="post-actions">
+            <button onclick="toggleComments('${post.id}')" class="comment-toggle-btn">
+                Comments (${post.comments?.length || 0})
+            </button>
+        </div>
+        <div class="comments-section" id="comments-${post.id}" style="display: none;">
+            <div class="comments-container" id="comments-container-${post.id}">
+                ${createCommentsHTML(post.comments || [])}
+            </div>
+            <div class="add-comment">
+                <textarea class="comment-input" placeholder="Write a comment..."></textarea>
+                <button onclick="addComment('${post.id}')" class="add-comment-btn">Add Comment</button>
+            </div>
+        </div>
     `;
-
+    
     return postElement;
+}
+
+function getRoleBadge(role) {
+    const badges = {
+        'admin': '<span class="role-badge admin-badge">Admin</span>',
+        'mod': '<span class="role-badge mod-badge">Moderator</span>',
+        'teacher': '<span class="role-badge teacher-badge">Teacher</span>',
+        'student': '<span class="role-badge student-badge">Student</span>'
+    };
+    return badges[role] || '';
+}
+
+function createCommentElement(comment) {
+    const { canModerate } = checkUserPermissions();
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    
+    const commentElement = document.createElement('div');
+    commentElement.className = 'comment';
+    commentElement.id = `comment-${comment.id}`;
+    
+    // Get user role badge
+    const roleBadge = getRoleBadge(comment.authorRole);
+    
+    commentElement.innerHTML = `
+        <div class="comment-header">
+            <div class="comment-info">
+                <span class="comment-author">${comment.author}</span>
+                ${roleBadge}
+                <span class="comment-date">${new Date(comment.timestamp).toLocaleString()}</span>
+            </div>
+            ${(canModerate || currentUser?.username === comment.author) ? `
+                <button class="delete-comment-btn" onclick="deleteComment('${comment.postId}', '${comment.id}')">
+                    <span class="delete-icon">🗑️</span>
+                </button>
+            ` : ''}
+        </div>
+        <div class="comment-content">${comment.content}</div>
+    `;
+    
+    return commentElement;
 }
 
 async function deletePost(event, postId) {

@@ -112,8 +112,8 @@ function displayCourses(courses) {
         const courseCard = document.createElement('div');
         courseCard.className = 'course-card';
         courseCard.innerHTML = `
-            <span class="course-category ${course.category}">${course.category}</span>
-            <h3 class="course-title">${course.name}</h3>
+            <span class="course-category ${course.category}">${capitalize(course.category)}</span>
+            <h3 class="course-title">${capitalize(course.name)}</h3>
             <p class="course-description">${truncatedText}</p>
             <div class="course-stats">
                 <span>${course.students?.length || 0} students</span>
@@ -207,4 +207,8 @@ function handleCourseCreation(e) {
 function loadCourses() {
     const courses = JSON.parse(localStorage.getItem('courses')) || [];
     displayCourses(courses);
+}
+
+function capitalize(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 } 

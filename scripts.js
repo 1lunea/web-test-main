@@ -167,47 +167,63 @@ function clearErrors() {
 }
 
 async function handleLogin(e) {
-  e.preventDefault();
-  const username = document.getElementById('loginUsername').value;
-  const password = document.getElementById('loginPassword').value;
+    e.preventDefault();
+    const username = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
+    const loadingElement = document.querySelector('.loading');
 
-  if (!username || !password) {
-    alert('Please fill in all fields');
-    return;
-  }
-
-  // Check for admin credentials
-  if (username === 'adminquang' && password === 'adminfirst') {
-    localStorage.setItem('currentUser', JSON.stringify({
-      id: 'admin',
-      username: 'adminquang',
-      role: 'admin'
-    }));
-    window.location.href = 'admin/admin-panel.html';
-    return;
-  }
-
-  const users = loadUsers();
-  const user = users.find(u => u.username === username && u.password === password);
-
-  if (user) {
-    // Store user session
-    localStorage.setItem('currentUser', JSON.stringify({
-      id: user.id,
-      username: user.username,
-      role: user.role
-    }));
-    
-    if (user.role && user.profile) {
-      // User has completed setup, redirect to dashboard
-      window.location.href = user.role === 'teacher' ? 
-        'teacher/teacher-dashboard.html' : 
-        'student/student-dashboard.html';
-    } else {
-      // User has not completed setup, redirect to setup-account.html
-      window.location.href = 'setup-account.html';
+    if (!username || !password) {
+        alert('Please fill in all fields');
+        return;
     }
-  } else {
-    alert('Invalid username or password');
-  }
+
+    try {
+        // Show loading animation
+        if (loadingElement) loadingElement.style.display = 'block';
+
+        // Check for admin credentials
+        if (username === 'adminquang' && password === 'adminfirst') {
+            localStorage.setItem('currentUser', JSON.stringify({
+                id: 'admin',
+                username: 'adminquang',
+                role: 'admin'
+            }));
+            window.location.href = 'admin/admin-panel.html';
+            return;
+        }
+
+        const users = loadUsers();
+        const user = users.find(u => u.username === username && u.password === password);
+
+        if (user) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            
+            // Hide loading before redirect
+            if (loadingElement) loadingElement.style.display = 'none';
+            
+            // Immediate redirect based on role
+            switch(user.role) {
+                case 'mod':
+                    window.location.href = 'mod/mod-panel.html';
+                    break;
+                case 'teacher':
+                    window.location.href = 'teacher/teacher-dashboard.html';
+                    break;
+                case 'student':
+                    window.location.href = 'student/student-dashboard.html';
+                    break;
+                default:
+                    window.location.href = 'setup-account.html';
+            }
+        } else {
+            // Hide loading for failed login
+            if (loadingElement) loadingElement.style.display = 'none';
+            alert('Invalid username or password');
+        }
+    } catch (error) {
+        // Hide loading if there's an error
+        if (loadingElement) loadingElement.style.display = 'none';
+        console.error('Login error:', error);
+        alert('An error occurred during login. Please try again.');
+    }
 }

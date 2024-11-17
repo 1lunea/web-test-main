@@ -277,25 +277,29 @@
             margin-top: 1.5rem;
         }
 
-        .mini-submission-card {
+        .submission-card {
             background-color: #161b22;
             border: 1px solid #30363d;
             border-radius: 8px;
             padding: 1rem;
-            cursor: pointer;
             transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
-        .mini-submission-card:hover {
+        .submission-card:hover {
             transform: translateY(-2px);
             border-color: #58a6ff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .student-info {
+        .submission-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #30363d;
         }
 
         .student-name {
@@ -324,6 +328,58 @@
         .status-rejected {
             background-color: rgba(248, 81, 73, 0.2);
             color: #f85149;
+        }
+
+        .submission-details {
+            font-size: 0.85rem;
+            color: #8b949e;
+        }
+
+        .submission-time {
+            margin-bottom: 0.5rem;
+        }
+
+        .submission-text {
+            color: #c9d1d9;
+            line-height: 1.4;
+        }
+
+        .view-submission-btn {
+            background-color: #21262d;
+            color: #58a6ff;
+            border: 1px solid #30363d;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            margin-top: auto;
+        }
+
+        .view-submission-btn:hover {
+            background-color: #30363d;
+            border-color: #58a6ff;
+        }
+
+        .submissions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background-color: #0d1117;
+            margin: 5% auto;
+            padding: 2rem;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1200px;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         .no-submissions {
