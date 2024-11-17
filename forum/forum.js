@@ -31,6 +31,9 @@ function setupNavigation() {
     } else if (currentUser.role === 'admin') {
         backButton.onclick = () => window.location.href = '../admin/admin-panel.html';
         accountButton.onclick = () => window.location.href = '../admin/admin-account.html';
+    } else if (currentUser.role === 'mod') {
+        backButton.onclick = () => window.location.href = '../mod/mod-panel.html';
+        accountButton.onclick = () => window.location.href = '../mod/mod-account.html';
     }
 }
 
@@ -39,7 +42,12 @@ function getUserTag(user) {
         case 'admin': 
             return {
                 tag: '<span class="user-tag tag-admin">Admin</span>',
-                color: '#da3633'
+                color: '#8957e5'
+            };
+        case 'mod': 
+            return {
+                tag: '<span class="user-tag tag-mod">Moderator</span>',
+                color: '#f85149'
             };
         case 'teacher': 
             return {
@@ -70,13 +78,22 @@ function loadPosts() {
     postsList.innerHTML = '';
 
     posts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
+    
     posts.forEach(post => {
         const postCard = document.createElement('div');
         postCard.className = 'post-card';
 
         const userTagInfo = getUserTag(post.author);
         const currentUserId = getCurrentUserId();
+        
+        // Add hashtags HTML
+        const hashtagsHTML = post.hashtags && post.hashtags.length > 0 
+            ? `<div class="hashtags-container">
+                ${post.hashtags.map(tag => 
+                    `<span class="hashtag" onclick="searchByHashtag('${tag}')">${tag}</span>`
+                ).join('')}
+               </div>`
+            : '';
         
         postCard.innerHTML = `
             <div class="post-header">
@@ -93,8 +110,10 @@ function loadPosts() {
                 </div>
             </div>
             <div class="post-preview">${post.content.substring(0, 200)}${post.content.length > 200 ? '...' : ''}</div>
+            ${hashtagsHTML}
             <div class="post-footer">
                 <span class="comment-count">${post.comments?.length || 0} comments</span>
+                <span class="post-category-label">${post.category || ''}</span>
             </div>
         `;
 
@@ -121,12 +140,13 @@ function loadPosts() {
 }
 
 function handleDeletePost(postId) {
-    const currentUserId = getCurrentUserId();
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
     const post = posts.find(p => p.id === postId);
     
     // Check if user has permission to delete
-    if (!post || (!isAdmin() && currentUserId !== post.author.username)) {
+    const canModerate = currentUser.role === 'admin' || currentUser.role === 'mod';
+    if (!post || (!canModerate && currentUser.username !== post.author.username)) {
         alert('You do not have permission to delete this post.');
         return;
     }
@@ -151,12 +171,24 @@ function createPost(event) {
     
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const title = document.getElementById('postTitle').value;
+    const subtitle = document.getElementById('postSubtitle').value;
     const content = document.getElementById('postContent').value;
+    const category = document.getElementById('postCategory').value;
+    const hashtagsInput = document.getElementById('postHashtags').value;
+    
+    // Process hashtags
+    const hashtags = hashtagsInput
+        .split(' ')
+        .map(tag => tag.startsWith('#') ? tag : `#${tag}`)
+        .filter(tag => tag.length > 1); // Filter out empty tags
     
     const newPost = {
         id: Date.now().toString(),
         title: title.trim(),
+        subtitle: subtitle.trim(),
         content: content.trim(),
+        category: category,
+        hashtags: hashtags,
         author: currentUser,
         authorName: currentUser.username,
         timestamp: new Date().toISOString(),
@@ -173,18 +205,9 @@ function createPost(event) {
 }
 
 function searchPosts(query) {
-    const posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
-    const filteredPosts = posts.filter(post => 
-        post.title.toLowerCase().includes(query.toLowerCase()) ||
-        post.content.toLowerCase().includes(query.toLowerCase())
-    );
-    
-    const postsList = document.getElementById('postsList');
-    postsList.innerHTML = '';
-    
-    filteredPosts.forEach(post => {
-        // ... same post card creation code as in loadPosts ...
-    });
+    const categoryFilter = document.querySelector('.filter-select:nth-child(2)').value;
+    const posterFilter = document.querySelector('.filter-select:nth-child(3)').value;
+    applyFilters(query, categoryFilter, posterFilter);
 }
 
 function viewPost(postId) {
@@ -193,7 +216,7 @@ function viewPost(postId) {
 
 function isAdmin() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    return currentUser && currentUser.username === 'adminquang';
+    return currentUser && (currentUser.username === 'adminquang' || currentUser.role === 'mod');
 }
 
 function displayPosts(posts) {
@@ -315,7 +338,7 @@ function checkUserPermissions() {
 
     return {
         canPost: true, // All logged-in users can post
-        canModerate: currentUser.role === 'admin' || currentUser.role === 'mod' // Both admins and mods can moderate
+        canModerate: currentUser.role === 'admin' || currentUser.role === 'mod'
     };
 }
 
@@ -428,4 +451,173 @@ async function deletePost(event, postId) {
             alert('Failed to delete post. Please try again.');
         }
     }
+}
+
+// Add these functions to handle filtering
+function filterByTag(category) {
+    const searchQuery = document.querySelector('.search-bar').value;
+    const posterFilter = document.querySelector('.filter-select:nth-child(3)').value;
+    applyFilters(searchQuery, category, posterFilter);
+}
+
+function filterByPoster(posterType) {
+    const searchQuery = document.querySelector('.search-bar').value;
+    const categoryFilter = document.querySelector('.filter-select:nth-child(2)').value;
+    applyFilters(searchQuery, categoryFilter, posterType);
+}
+
+function searchPosts(query) {
+    const categoryFilter = document.querySelector('.filter-select:nth-child(2)').value;
+    const posterFilter = document.querySelector('.filter-select:nth-child(3)').value;
+    applyFilters(query, categoryFilter, posterFilter);
+}
+
+function clearFilters() {
+    // Clear all filter inputs
+    document.querySelector('.search-bar').value = '';
+    document.querySelectorAll('.filter-select').forEach(select => {
+        select.value = '';
+    });
+    
+    // Reset to show all posts
+    applyFilters('', '', '');
+}
+
+function applyFilters(searchQuery, category, posterType) {
+    let posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+    // Filter by search query
+    if (searchQuery) {
+        posts = posts.filter(post => 
+            post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            post.content.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }
+
+    // Filter by category
+    if (category) {
+        posts = posts.filter(post => post.category === category);
+    }
+
+    // Filter by poster type
+    if (posterType) {
+        switch (posterType) {
+            case 'my-posts':
+                posts = posts.filter(post => post.author.username === currentUser.username);
+                break;
+            case 'staff':
+                posts = posts.filter(post => 
+                    post.author.role === 'admin' || 
+                    post.author.role === 'mod'
+                );
+                break;
+            case 'teacher':
+                posts = posts.filter(post => post.author.role === 'teacher');
+                break;
+            case 'students':
+                posts = posts.filter(post => post.author.role === 'student');
+                break;
+        }
+    }
+
+    // Display filtered posts
+    displayFilteredPosts(posts);
+}
+
+function displayFilteredPosts(posts) {
+    const postsList = document.getElementById('postsList');
+    postsList.innerHTML = '';
+
+    if (posts.length === 0) {
+        postsList.innerHTML = `
+            <div class="no-posts-message" style="text-align: center; padding: 2rem; color: #8b949e;">
+                No posts found matching your filters.
+            </div>
+        `;
+        return;
+    }
+
+    posts.forEach(post => {
+        const postCard = document.createElement('div');
+        postCard.className = 'post-card';
+
+        const userTagInfo = getUserTag(post.author);
+        const currentUserId = getCurrentUserId();
+        
+        // Truncate content if it's too long
+        const maxContentLength = 200;
+        const truncatedContent = post.content.length > maxContentLength 
+            ? post.content.substring(0, maxContentLength) + '...' 
+            : post.content;
+        
+        const hashtagsHTML = post.hashtags && post.hashtags.length > 0 
+            ? `<div class="hashtags-container">
+                ${post.hashtags.map(tag => 
+                    `<span class="hashtag" onclick="searchByHashtag('${tag}')">${tag}</span>`
+                ).join('')}
+               </div>`
+            : '';
+        
+        postCard.innerHTML = `
+            <div class="post-header">
+                <div>
+                    <div class="post-meta">
+                        <span class="post-author" style="color: ${userTagInfo.color}">${post.authorName}</span>
+                        ${userTagInfo.tag}
+                        <span class="post-timestamp">${new Date(post.timestamp).toLocaleString()}</span>
+                        ${(isAdmin() || currentUserId === post.author.username) ? 
+                            `<button class="delete-btn">Delete Post</button>` : 
+                            ''}
+                    </div>
+                    <h3 class="post-title">${post.title}</h3>
+                    ${post.subtitle ? `<h4 class="post-subtitle">${post.subtitle}</h4>` : ''}
+                </div>
+            </div>
+            <div class="post-preview">${truncatedContent}</div>
+            ${hashtagsHTML}
+            <div class="post-footer">
+                <span class="comment-count">${post.comments?.length || 0} comments</span>
+                <span class="post-category-label">${post.category || ''}</span>
+            </div>
+        `;
+
+        // Add click event for the entire post card
+        postCard.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('delete-btn')) {
+                viewPost(post.id);
+            }
+        });
+
+        // Add separate click handler for delete button
+        const deleteBtn = postCard.querySelector('.delete-btn');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleDeletePost(post.id);
+            });
+        }
+        
+        postsList.appendChild(postCard);
+    });
+}
+
+// Add function to search by hashtag
+function searchByHashtag(hashtag) {
+    event.stopPropagation(); // Prevent post card click
+    
+    // Clear other filters
+    document.querySelector('.search-bar').value = '';
+    document.querySelectorAll('.filter-select').forEach(select => {
+        select.value = '';
+    });
+    
+    // Filter posts by hashtag
+    let posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
+    const filteredPosts = posts.filter(post => 
+        post.hashtags && post.hashtags.includes(hashtag)
+    );
+    
+    displayFilteredPosts(filteredPosts);
 } 

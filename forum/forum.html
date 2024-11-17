@@ -138,29 +138,72 @@
         }
 
         .tag-owner { background-color: #333333; }
-        .tag-admin { background-color: #da3633; }
+        .tag-admin { background-color: rgba(137, 87, 229, 0.2) !important; color: #8957e5 !important; border: 1px solid #8957e5 !important; }
         .tag-teacher { background-color: #1f6feb; }
         .tag-student { background-color: #238636; }
 
         .modal {
             display: none;
             position: fixed;
-            top: 0;
+            z-index: 1001;
             left: 0;
+            top: 0;
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            overflow-y: auto;
         }
 
         .modal-content {
-            background-color: #161b22;
-            margin: 10vh auto;
-            padding: 2rem;
+            background-color: #0d1117;
+            margin: 20px auto;
+            padding: 1rem;
             border: 1px solid #30363d;
             border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
+            width: 95%;
+            max-width: 800px;
+            position: relative;
+        }
+
+        .post-form {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 0.25rem;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            padding: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .input-help {
+            font-size: 0.75rem;
+            color: #8b949e;
+            margin-top: 0.15rem;
+        }
+
+        .create-post-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .hashtag-input {
+            font-family: 'IBM Plex Mono', monospace;
         }
 
         .post-form input,
@@ -273,7 +316,7 @@
             border: 1px solid #30363d;
             border-radius: 6px;
             color: #c9d1d9;
-            padding: 0.8rem;
+            padding: 0.5rem;
             font-family: 'IBM Plex Mono', monospace;
         }
 
@@ -356,13 +399,13 @@
         }
 
         .admin-badge {
-            background-color: rgba(88, 166, 255, 0.2);
-            color: #58a6ff;
+            background-color: rgba(137, 87, 229, 0.2) !important;
+            color: #8957e5 !important;
         }
 
         .mod-badge {
-            background-color: rgba(63, 185, 80, 0.2);
-            color: #3fb950;
+            background-color: rgba(248, 81, 73, 0.2) !important;
+            color: #f85149 !important;
         }
 
         .teacher-badge {
@@ -397,6 +440,190 @@
         .delete-icon {
             font-size: 16px;
         }
+
+        .tag-mod { 
+            background-color: rgba(248, 81, 73, 0.2) !important;
+            color: #f85149 !important;
+            border: 1px solid #f85149 !important;
+        }
+
+        .mod-badge {
+            background-color: rgba(248, 81, 73, 0.2) !important;
+            color: #f85149 !important;
+        }
+
+        .search-filter-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+
+        .search-bar {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .search-bar:focus {
+            border-color: #58a6ff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+        }
+
+        .filter-select {
+            padding: 0.8rem 1rem;
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-family: 'IBM Plex Mono', monospace;
+            cursor: pointer;
+            min-width: 180px;
+            font-size: 0.9rem;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238b949e' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+            transition: all 0.2s;
+        }
+
+        .filter-select:hover {
+            border-color: #58a6ff;
+        }
+
+        .filter-select:focus {
+            border-color: #58a6ff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+        }
+
+        .filter-select option {
+            background-color: #21262d;
+            color: #c9d1d9;
+            padding: 8px;
+        }
+
+        .clear-filters-btn {
+            padding: 0.8rem 1rem;
+            background-color: #21262d;
+            border: 1px solid #f85149;  /* Red outline */
+            border-radius: 6px;
+            color: #f85149;  /* Red text */
+            font-family: 'IBM Plex Mono', monospace;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .clear-filters-btn:hover {
+            background-color: rgba(248, 81, 73, 0.1);  /* Slight red background on hover */
+            border-color: #f85149;
+        }
+
+        .clear-filters-btn:focus {
+            outline: none;
+            border-color: #f85149;
+            box-shadow: 0 0 0 3px rgba(248, 81, 73, 0.1);  /* Red glow on focus */
+        }
+
+        .post-category-select {
+            width: 50%;
+            padding: 0.8rem 1rem;
+            height: 45px;
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238b949e' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+        }
+
+        .post-category-select:focus {
+            outline: none;
+            border-color: #58a6ff;
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+        }
+
+        .post-category-select:hover {
+            border-color: #58a6ff;
+        }
+
+        .hashtag {
+            display: inline-block;
+            color: #58a6ff;
+            cursor: pointer;
+            transition: color 0.2s;
+            margin-right: 0.5rem;
+        }
+
+        .hashtag:hover {
+            color: #79c0ff;
+            text-decoration: underline;
+        }
+
+        .hashtags-container {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .input-help {
+            display: block;
+            color: #8b949e;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .hashtag-input {
+            width: 95%;
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            padding: 0.8rem;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .hashtags-container {
+            margin: 0.75rem 0;
+            font-size: 0.9rem;
+        }
+
+        .hashtag {
+            display: inline-block;
+            color: #58a6ff;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 0.5rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background-color: rgba(88, 166, 255, 0.1);
+            font-size: 0.85rem;
+        }
+
+        .hashtag:hover {
+            color: #79c0ff;
+            background-color: rgba(88, 166, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .hashtag:active {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
@@ -408,7 +635,6 @@
         </div>
         <div class="nav-right">
             <button class="nav-button" id="accountButton">Account</button>
-            <input type="text" class="search-bar" placeholder="Search posts..." oninput="searchPosts(this.value)">
         </div>
     </nav>
 
@@ -416,6 +642,25 @@
         <div class="forum-header">
             <h1>Forum</h1>
             <button class="create-post-btn" onclick="openCreatePostModal()">Create Post</button>
+        </div>
+        <div class="search-filter-container">
+            <input type="text" class="search-bar" placeholder="Search posts..." oninput="searchPosts(this.value)">
+            <select class="filter-select" onchange="filterByTag(this.value)">
+                <option value="">Filter by category</option>
+                <option value="announcement">Announcement</option>
+                <option value="discussion">Discussion</option>
+                <option value="question">Question</option>
+                <option value="support">Support</option>
+                <option value="suggestion">Suggestion</option>
+            </select>
+            <select class="filter-select" onchange="filterByPoster(this.value)">
+                <option value="">Filter by poster</option>
+                <option value="my-posts">My Posts</option>
+                <option value="staff">Staff Posts</option>
+                <option value="teacher">Teacher Posts</option>
+                <option value="students">Student Posts</option>
+            </select>
+            <button class="clear-filters-btn" onclick="clearFilters()">Clear Filters</button>
         </div>
         <div id="postsList">
             <!-- Posts will be dynamically added here -->
@@ -437,6 +682,14 @@
                     >
                 </div>
                 <div class="form-group">
+                    <label for="postSubtitle">Subtitle (optional)</label>
+                    <input 
+                        type="text" 
+                        id="postSubtitle" 
+                        placeholder="Enter post subtitle" 
+                    >
+                </div>
+                <div class="form-group">
                     <label for="postContent">Content</label>
                     <textarea 
                         id="postContent" 
@@ -444,6 +697,27 @@
                         required
                         rows="10"
                     ></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="postHashtags">Hashtags (separate with spaces)</label>
+                    <input 
+                        type="text" 
+                        id="postHashtags" 
+                        placeholder="e.g. #help #coding #homework" 
+                        class="hashtag-input"
+                    >
+                    <small class="input-help">Start each tag with # (optional)</small>
+                </div>
+                <div class="form-group">
+                    <label for="postCategory">Category</label>
+                    <select id="postCategory" required class="post-category-select">
+                        <option value="">Select a category</option>
+                        <option value="announcement">Announcement</option>
+                        <option value="discussion">Discussion</option>
+                        <option value="question">Question</option>
+                        <option value="support">Support</option>
+                        <option value="suggestion">Suggestion</option>
+                    </select>
                 </div>
                 <button type="submit" class="create-post-btn">Create Post</button>
             </form>

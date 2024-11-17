@@ -344,6 +344,81 @@
             cursor: pointer;
             font-family: 'IBM Plex Mono', monospace;
         }
+
+        /* Add these styles for responsive video embeds */
+        .ql-editor iframe {
+            max-width: 100%;
+            margin: 1em auto;
+        }
+
+        /* Fix Quill size picker styles */
+        .ql-size.ql-picker {
+            width: auto !important;
+        }
+
+        .ql-size .ql-picker-label {
+            padding-right: 20px !important;
+        }
+
+        .ql-size .ql-picker-options {
+            width: auto !important;
+            min-width: 100px !important;
+            padding: 5px 0 !important;
+            background-color: #21262d !important;
+            border: 1px solid #30363d !important;
+            border-radius: 6px !important;
+        }
+
+        .ql-size .ql-picker-item {
+            padding: 5px 20px !important;
+            color: #c9d1d9 !important;
+        }
+
+        .ql-size .ql-picker-item:hover {
+            background-color: #30363d !important;
+            color: #ffffff !important;
+        }
+
+        /* Remove old conflicting styles */
+        .ql-size {
+            width: auto !important;
+        }
+
+        .ql-size .ql-picker-options {
+            width: auto !important;
+        }
+
+        /* Add resizable iframe styles */
+        .ql-editor .resizable-iframe {
+            position: relative;
+            display: inline-block;
+            margin: 1em auto;
+        }
+
+        .ql-editor .resizable-iframe iframe {
+            max-width: 100%;
+            border: 2px solid #30363d;
+            border-radius: 6px;
+        }
+
+        .ql-editor .resize-handle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #58a6ff;
+            border-radius: 50%;
+            z-index: 100;
+        }
+
+        .ql-editor .resize-handle.se {
+            bottom: -5px;
+            right: -5px;
+            cursor: se-resize;
+        }
+
+        .ql-editor .resize-handle:hover {
+            background-color: #1f6feb;
+        }
     </style>
 </head>
 <body>
@@ -402,19 +477,5 @@
     </nav>
 
     <script src="courses.js"></script>
-    <script>
-        function checkAuth() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser || !['student', 'teacher', 'admin', 'moderator'].includes(currentUser.role)) {
-                window.location.href = '../login-signup.html';
-                return;
-            }
-            
-            const createECourseBtn = document.getElementById('createECourseBtn');
-            if (currentUser.role === 'admin' || currentUser.role === 'moderator') {
-                createECourseBtn.style.display = 'block';
-            }
-        }
-    </script>
 </body>
 </html> 

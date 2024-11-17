@@ -80,7 +80,7 @@
         }
 
         .course-content {
-            background-color: #161b22;
+            background-color: #0d1117;
             border: 1px solid #30363d;
             border-radius: 12px;
             padding: 2rem;
@@ -101,8 +101,8 @@
         .course-description iframe {
             max-width: 100%;
             border-radius: 8px;
-            margin: 1rem 0;
-            aspect-ratio: 16/9;
+            margin: 1rem auto;
+            display: block;
         }
 
         .enroll-button {
@@ -178,6 +178,89 @@
         .course-category:hover {
             filter: brightness(1.1);
         }
+
+        /* Add styles for moderator controls */
+        .mod-controls {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .edit-btn {
+            background-color: #238636;
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background-color: #2ea043;
+        }
+
+        .delete-btn {
+            background-color: transparent;
+            color: #f85149;
+            border: 1px solid #f85149;
+        }
+
+        .delete-btn:hover {
+            background-color: #da36331a;
+        }
+
+        /* Update video iframe styles */
+        .course-description iframe {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 1rem auto;
+            display: block;
+        }
+
+        /* Add Quill text size styles */
+        .course-description .ql-size-small {
+            font-size: 0.75em;
+        }
+
+        .course-description .ql-size-normal {
+            font-size: 1em;
+        }
+
+        .course-description .ql-size-large {
+            font-size: 1.5em;
+        }
+
+        .course-description .ql-size-huge {
+            font-size: 2em;
+        }
+
+        /* Ensure proper spacing between different sized text */
+        .course-description p {
+            margin: 0.5em 0;
+            line-height: 1.6;
+        }
+
+        /* Preserve other text formatting */
+        .course-description strong {
+            font-weight: bold;
+        }
+
+        .course-description em {
+            font-style: italic;
+        }
+
+        .course-description blockquote {
+            border-left: 4px solid #30363d;
+            margin: 1em 0;
+            padding-left: 1em;
+            color: #8b949e;
+        }
     </style>
 </head>
 <body>
@@ -250,15 +333,29 @@
                 case 'admin':
                     accountButton.onclick = () => window.location.href = '../admin/admin-account.html';
                     break;
-                case 'moderator':
-                    accountButton.onclick = () => window.location.href = '../moderator/moderator-account.html';
+                case 'mod':
+                    accountButton.onclick = () => window.location.href = '../mod/mod-account.html';
                     break;
             }
 
-            // Handle enrollment
+            // Add moderator controls if applicable
+            if (canModerate()) {
+                const controlsDiv = document.createElement('div');
+                controlsDiv.className = 'mod-controls';
+                controlsDiv.innerHTML = `
+                    <button onclick="editCourse('${courseId}')" class="edit-btn">Edit Course</button>
+                    <button onclick="deleteCourse('${courseId}')" class="delete-btn">Delete Course</button>
+                `;
+                document.querySelector('.course-header').appendChild(controlsDiv);
+            }
+
+            // Handle enrollment button visibility and functionality
             const enrollButton = document.getElementById('enrollButton');
             
-            if (course.students?.includes(currentUser.id)) {
+            if (currentUser.role === 'admin' || currentUser.role === 'mod') {
+                // Hide enroll button for moderators and admins
+                enrollButton.style.display = 'none';
+            } else if (course.students?.includes(currentUser.id)) {
                 enrollButton.textContent = 'Enrolled';
                 enrollButton.classList.add('enrolled');
             } else {
@@ -282,6 +379,26 @@
 
         function capitalize(string) {
             return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+        }
+
+        function canModerate() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            return currentUser && (currentUser.role === 'admin' || currentUser.role === 'mod');
+        }
+
+        // Add these functions for moderator controls
+        function editCourse(courseId) {
+            // Implement course editing functionality
+            console.log('Edit course:', courseId);
+        }
+
+        function deleteCourse(courseId) {
+            if (confirm('Are you sure you want to delete this course?')) {
+                const courses = JSON.parse(localStorage.getItem('courses')) || [];
+                const updatedCourses = courses.filter(c => c.id !== courseId);
+                localStorage.setItem('courses', JSON.stringify(updatedCourses));
+                window.location.href = 'courses-dashboard.html';
+            }
         }
     </script>
 </body>

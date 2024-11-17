@@ -10,6 +10,11 @@ function checkAuth() {
     }
 }
 
+function getCurrentUserId() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    return currentUser ? currentUser.username : null;
+}
+
 function loadPost() {
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('id');
@@ -30,17 +35,41 @@ function loadPost() {
     document.title = `${post.title} - HMP Forum`;
     
     const userTagInfo = getUserTag(post.author);
+    const currentUserId = getCurrentUserId();
+    
+    const hashtagsHTML = post.hashtags && post.hashtags.length > 0 
+        ? `<div class="hashtags-container">
+            ${post.hashtags.map(tag => 
+                `<span class="hashtag" onclick="window.location.href='forum.html?hashtag=${tag.substring(1)}'">${tag}</span>`
+            ).join('')}
+           </div>`
+        : '';
     
     const postContent = document.getElementById('postContent');
     postContent.innerHTML = `
         <article class="post-card">
-            <div class="post-meta">
-                <span class="post-author" style="color: ${userTagInfo.color}">${post.authorName}</span>
-                ${userTagInfo.tag}
-                <span class="post-timestamp">${new Date(post.timestamp).toLocaleString()}</span>
+            <div class="post-header">
+                <div>
+                    <div class="post-meta">
+                        <span class="post-author" style="color: ${userTagInfo.color}">${post.authorName}</span>
+                        ${userTagInfo.tag}
+                        <span class="post-timestamp">${new Date(post.timestamp).toLocaleString()}</span>
+                        ${(isAdmin() || currentUserId === post.author.username) ? 
+                            `<button class="delete-btn" onclick="deletePost('${post.id}')">Delete Post</button>` : 
+                            ''}
+                    </div>
+                    <h1 class="post-title">${post.title}</h1>
+                    ${post.subtitle ? `<h2 class="post-subtitle">${post.subtitle}</h2>` : ''}
+                </div>
             </div>
-            <h1 class="post-title">${post.title}</h1>
             <div class="post-content">${formatContent(post.content)}</div>
+            ${hashtagsHTML}
+            <div class="post-footer">
+                <div class="post-info">
+                    <span class="comment-count">${post.comments?.length || 0} comments</span>
+                    ${post.category ? `<span class="post-category-label">${post.category}</span>` : ''}
+                </div>
+            </div>
         </article>
     `;
 
@@ -114,7 +143,8 @@ function deleteComment(commentId) {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             const comment = posts[postIndex].comments.find(c => c.id === commentId);
             
-            if (isAdmin() || comment.author.username === currentUser.username) {
+            const canModerate = currentUser.role === 'admin' || currentUser.role === 'mod';
+            if (canModerate || comment.author.username === currentUser.username) {
                 posts[postIndex].comments = posts[postIndex].comments.filter(
                     comment => comment.id !== commentId
                 );
@@ -144,8 +174,12 @@ function addComment(event) {
         const newComment = {
             id: Date.now().toString(),
             content,
-            author: currentUser,
-            authorName: currentUser.username,
+            author: {
+                username: currentUser.username,
+                role: currentUser.role,
+                name: currentUser.name
+            },
+            authorName: currentUser.name,
             timestamp: new Date().toISOString()
         };
         
@@ -171,7 +205,12 @@ function getUserTag(user) {
         case 'admin': 
             return {
                 tag: '<span class="user-tag tag-admin">Admin</span>',
-                color: '#da3633'
+                color: '#8957e5'
+            };
+        case 'mod':
+            return {
+                tag: '<span class="user-tag tag-mod">Moderator</span>',
+                color: '#f85149'
             };
         case 'teacher': 
             return {
@@ -193,5 +232,14 @@ function getUserTag(user) {
 
 function isAdmin() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    return currentUser && currentUser.username === 'adminquang';
+    return currentUser && (currentUser.username === 'adminquang' || currentUser.role === 'mod');
+}
+
+function deletePost(postId) {
+    if (confirm('Are you sure you want to delete this post?')) {
+        let posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
+        posts = posts.filter(p => p.id !== postId);
+        localStorage.setItem('forumPosts', JSON.stringify(posts));
+        window.location.href = 'forum.html';
+    }
 }

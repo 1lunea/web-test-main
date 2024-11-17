@@ -7,13 +7,13 @@ window.onload = function() {
 
 function checkAuth() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser || !['student', 'teacher', 'admin', 'moderator'].includes(currentUser.role)) {
+    if (!currentUser || !['student', 'teacher', 'admin', 'mod'].includes(currentUser.role)) {
         window.location.href = '../login-signup.html';
         return;
     }
     
     const createECourseBtn = document.getElementById('createECourseBtn');
-    if (currentUser.role === 'admin' || currentUser.role === 'moderator') {
+    if (currentUser.role === 'admin' || currentUser.role === 'mod') {
         createECourseBtn.style.display = 'block';
     }
 }
@@ -36,7 +36,7 @@ function setupEventListeners() {
     document.getElementById('cancelCreate').addEventListener('click', hideCreateCourseModal);
     document.getElementById('createCourseForm').addEventListener('submit', handleCourseCreation);
 
-    // Initialize Quill editor with video embedding
+    // Initialize Quill editor with video embedding and resizing
     quill = new Quill('#editor', {
         theme: 'snow',
         modules: {
@@ -46,13 +46,14 @@ function setupEventListeners() {
                 [{ 'header': 1 }, { 'header': 2 }],
                 [{ 'list': 'ordered'}, { 'list': 'bullet' }],
                 [{ 'script': 'sub'}, { 'script': 'super' }],
-                ['link', 'image', 'video'],  // Added video to toolbar
+                ['link', 'image', 'video'],
+                [{ 'size': ['small', 'normal', 'large', 'huge'] }], // Add size options
                 ['clean']
             ]
         }
     });
 
-    // Add custom handler for video embedding
+    // Add custom handler for video embedding with size options
     const toolbar = quill.getModule('toolbar');
     toolbar.addHandler('video', () => {
         const url = prompt('Enter YouTube or Vimeo URL:');
@@ -67,9 +68,27 @@ function setupEventListeners() {
                 embedUrl = `https://player.vimeo.com/video/${videoId}`;
             }
             
-            // Insert the video embed
+            // Create resizable wrapper with iframe
+            const videoEmbed = `
+                <div class="resizable-iframe" data-width="640" data-height="480">
+                    <iframe src="${embedUrl}" 
+                        width="640" 
+                        height="480" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                    <div class="resize-handle se"></div>
+                </div>`;
+            
+            // Insert the video embed as HTML
             const range = quill.getSelection(true);
-            quill.insertEmbed(range.index, 'video', embedUrl, 'user');
+            quill.clipboard.dangerouslyPasteHTML(range.index, videoEmbed);
+
+            // Add resize functionality after insertion
+            setTimeout(() => {
+                setupResizeHandlers();
+            }, 100);
         }
     });
 }
@@ -113,7 +132,7 @@ function displayCourses(courses) {
         courseCard.className = 'course-card';
         courseCard.innerHTML = `
             <span class="course-category ${course.category}">${capitalize(course.category)}</span>
-            <h3 class="course-title">${capitalize(course.name)}</h3>
+            <h3 class="course-title">${course.name}</h3>
             <p class="course-description">${truncatedText}</p>
             <div class="course-stats">
                 <span>${course.students?.length || 0} students</span>
@@ -158,6 +177,10 @@ function setupNavigation() {
             dashboardButton.onclick = () => window.location.href = '../admin/admin-panel.html';
             accountButton.onclick = () => window.location.href = '../admin/admin-account.html';
             break;
+        case 'mod':
+            dashboardButton.onclick = () => window.location.href = '../moderator/moderator-panel.html';
+            accountButton.onclick = () => window.location.href = '../moderator/moderator-account.html';
+            break;
     }
 }
 
@@ -191,7 +214,7 @@ function handleCourseCreation(e) {
         assignments: [],
         creator: currentUser.id,
         creatorRole: currentUser.role,
-        type: (currentUser.role === 'admin' || currentUser.role === 'moderator') ? 'ecourse' : 'course'
+        type: (currentUser.role === 'admin' || currentUser.role === 'mod') ? 'ecourse' : 'course'
     };
 
     // Get existing courses or initialize empty array
@@ -211,4 +234,55 @@ function loadCourses() {
 
 function capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
+
+function canModerate() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    return currentUser && (currentUser.role === 'admin' || currentUser.role === 'mod');
+}
+
+// Add resize functionality
+function setupResizeHandlers() {
+    const resizables = document.querySelectorAll('.ql-editor .resizable-iframe');
+    
+    resizables.forEach(container => {
+        const handle = container.querySelector('.resize-handle');
+        const iframe = container.querySelector('iframe');
+        let isResizing = false;
+        let startX, startY, startWidth, startHeight;
+
+        handle.addEventListener('mousedown', initResize);
+
+        function initResize(e) {
+            isResizing = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            startWidth = parseInt(container.dataset.width || iframe.width);
+            startHeight = parseInt(container.dataset.height || iframe.height);
+
+            document.addEventListener('mousemove', resize);
+            document.addEventListener('mouseup', stopResize);
+            e.preventDefault();
+        }
+
+        function resize(e) {
+            if (!isResizing) return;
+
+            const width = startWidth + (e.clientX - startX);
+            const height = startHeight + (e.clientY - startY);
+
+            if (width > 200 && height > 150) {
+                iframe.width = width;
+                iframe.height = height;
+                container.dataset.width = width;
+                container.dataset.height = height;
+            }
+        }
+
+        function stopResize() {
+            isResizing = false;
+            document.removeEventListener('mousemove', resize);
+            document.removeEventListener('mouseup', stopResize);
+        }
+    });
 } 

@@ -293,7 +293,7 @@
 
         .modal-content input,
         .modal-content select {
-            width: 100%;
+            width: 95%;
             padding: 0.8rem;
             margin: 0.5rem 0;
             background-color: #0d1117;
@@ -355,7 +355,7 @@
                 </div>
                 <div class="admin-buttons">
                     <button id="deleteAllBtn" class="delete-all-btn">Delete All Users</button>
-                    <button onclick="window.location.href='add-admin.html'" class="add-admin-btn">Add Moderator</button>
+                    <button onclick="window.location.href='add-moderator.html'" class="add-admin-btn">Add Moderator</button>
                 </div>
             </div>
             <input type="text" id="searchInput" class="search-bar" placeholder="Search users...">
@@ -387,6 +387,19 @@
             </select>
             <button onclick="saveUserEdit()">Save Changes</button>
             <button onclick="closeEditModal()">Cancel</button>
+        </div>
+    </div>
+    <div id="addModModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Add New Moderator</h2>
+            <input type="text" id="modUsername" placeholder="Username">
+            <input type="password" id="modPassword" placeholder="Password">
+            <input type="text" id="modFullName" placeholder="Full Name">
+            <input type="email" id="modEmail" placeholder="Email">
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button onclick="addModerator()" style="background-color: #238636;">Add Moderator</button>
+                <button onclick="closeModModal()" style="background-color: #21262d;">Cancel</button>
+            </div>
         </div>
     </div>
     <script src="admin-panel.js"></script>

@@ -9,6 +9,10 @@ window.onload = function() {
     loadUsers();
     document.getElementById('searchInput').addEventListener('input', filterUsers);
     document.getElementById('deleteAllBtn').addEventListener('click', deleteAllUsers);
+    
+    // Add new event listener for the Add Moderator button
+    const addModBtn = document.querySelector('.add-admin-btn');
+    addModBtn.onclick = showModModal;
 };
 
 function loadUsers() {
@@ -187,4 +191,60 @@ function setupAccountButton() {
             window.location.href = 'admin-account.html';
         });
     }
+}
+
+function showModModal() {
+    document.getElementById('addModModal').style.display = 'flex';
+}
+
+function closeModModal() {
+    document.getElementById('addModModal').style.display = 'none';
+    // Clear the form
+    document.getElementById('modUsername').value = '';
+    document.getElementById('modPassword').value = '';
+    document.getElementById('modFullName').value = '';
+    document.getElementById('modEmail').value = '';
+}
+
+function addModerator() {
+    const username = document.getElementById('modUsername').value;
+    const password = document.getElementById('modPassword').value;
+    const fullName = document.getElementById('modFullName').value;
+    const email = document.getElementById('modEmail').value;
+
+    // Basic validation
+    if (!username || !password || !fullName || !email) {
+        alert('Please fill in all fields');
+        return;
+    }
+
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    
+    // Check if username already exists
+    if (users.some(user => user.username === username)) {
+        alert('Username already exists!');
+        return;
+    }
+
+    // Create new moderator object
+    const newMod = {
+        id: 'MOD' + Date.now(),
+        username: username,
+        password: password,
+        role: 'mod',
+        profile: {
+            id: 'MOD' + Date.now(),
+            fullName: fullName,
+            email: email
+        }
+    };
+
+    // Add to users array
+    users.push(newMod);
+    localStorage.setItem('users', JSON.stringify(users));
+
+    // Close modal and refresh display
+    closeModModal();
+    loadUsers();
+    alert('Moderator added successfully!');
 }
