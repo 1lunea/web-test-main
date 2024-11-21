@@ -118,11 +118,9 @@ function displayCourses(courses) {
     const coursesGrid = document.getElementById('coursesGrid');
     coursesGrid.innerHTML = '';
     
-    // Filter to show only e-courses on this page
     const eCourses = courses.filter(course => course.type === 'ecourse');
     
     eCourses.forEach(course => {
-        // Create a temporary div to strip HTML and get plain text
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = course.description;
         const plainText = tempDiv.textContent || tempDiv.innerText;

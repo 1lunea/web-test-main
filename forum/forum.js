@@ -160,6 +160,25 @@ function handleDeletePost(postId) {
 
 function openCreatePostModal() {
     document.getElementById('createPostModal').style.display = 'block';
+    
+    // Initialize Quill if it hasn't been initialized yet
+    if (!window.postQuill) {
+        window.postQuill = new Quill('#postEditor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline', 'strike'],
+                    ['blockquote', 'code-block'],
+                    [{ 'header': 1 }, { 'header': 2 }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'script': 'sub'}, { 'script': 'super' }],
+                    ['link', 'image', 'video'],
+                    ['clean']
+                ]
+            },
+            placeholder: 'Write your post content here...'
+        });
+    }
 }
 
 function closeModal(modalId) {
@@ -172,7 +191,7 @@ function createPost(event) {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     const title = document.getElementById('postTitle').value;
     const subtitle = document.getElementById('postSubtitle').value;
-    const content = document.getElementById('postContent').value;
+    const content = window.postQuill.root.innerHTML.trim();
     const category = document.getElementById('postCategory').value;
     const hashtagsInput = document.getElementById('postHashtags').value;
     
@@ -180,17 +199,17 @@ function createPost(event) {
     const hashtags = hashtagsInput
         .split(' ')
         .map(tag => tag.startsWith('#') ? tag : `#${tag}`)
-        .filter(tag => tag.length > 1); // Filter out empty tags
+        .filter(tag => tag.length > 1);
     
     const newPost = {
         id: Date.now().toString(),
         title: title.trim(),
         subtitle: subtitle.trim(),
-        content: content.trim(),
+        content: content,
         category: category,
         hashtags: hashtags,
         author: currentUser,
-        authorName: currentUser.username,
+        authorName: currentUser.name || currentUser.username,
         timestamp: new Date().toISOString(),
         comments: []
     };
@@ -199,8 +218,11 @@ function createPost(event) {
     posts.unshift(newPost);
     localStorage.setItem('forumPosts', JSON.stringify(posts));
     
-    closeModal('createPostModal');
+    // Clear the form and Quill editor
     document.getElementById('postForm').reset();
+    window.postQuill.setContents([]);
+    
+    closeModal('createPostModal');
     loadPosts();
 }
 

@@ -1,0 +1,500 @@
+/* Base Styles */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #0d1117;
+    color: #c9d1d9;
+    font-family: 'IBM Plex Mono', monospace;
+    min-height: 100vh;
+}
+
+/* Navigation Styles */
+.nav {
+    background-color: #161b22;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #30363d;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.nav-left {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-right {
+    margin-left: auto;
+}
+
+.nav-button {
+    background: none;
+    border: none;
+    color: #c9d1d9;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.nav-button:hover {
+    background-color: #21262d;
+}
+
+.nav-button.active {
+    background-color: #21262d;
+    font-weight: 600;
+}
+
+/* Course Dashboard Styles */
+.courses-container {
+    margin-top: 80px;
+    padding: 2rem;
+}
+
+.courses-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.create-course-btn {
+    background-color: #238636;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    display: none;
+}
+
+.create-course-btn:hover {
+    background-color: #2ea043;
+}
+
+/* Filter Section */
+.filter-section {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.search-bar {
+    width: 95%;
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #c9d1d9;
+    font-family: 'IBM Plex Mono', monospace;
+}
+
+/* Category Styles */
+.category-filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.category-filter, .course-category {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+/* Category Colors */
+.coding, .category-filter.coding {
+    background-color: rgba(35, 134, 54, 0.1);
+    color: #2ea043;
+    border-color: rgba(35, 134, 54, 0.2);
+}
+
+.math, .category-filter.math {
+    background-color: rgba(88, 166, 255, 0.1);
+    color: #58a6ff;
+    border-color: rgba(88, 166, 255, 0.2);
+}
+
+.physics, .category-filter.physics {
+    background-color: rgba(248, 81, 73, 0.1);
+    color: #f85149;
+    border-color: rgba(248, 81, 73, 0.2);
+}
+
+.chemistry, .category-filter.chemistry {
+    background-color: rgba(240, 136, 62, 0.1);
+    color: #f0883e;
+    border-color: rgba(240, 136, 62, 0.2);
+}
+
+.biology, .category-filter.biology {
+    background-color: rgba(163, 113, 247, 0.1);
+    color: #a371f7;
+    border-color: rgba(163, 113, 247, 0.2);
+}
+
+.category-filter:hover, 
+.category-filter.active {
+    transform: translateY(-2px);
+    filter: brightness(1.2);
+}
+
+/* Course Grid and Cards */
+.courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.course-card {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.course-card .course-category {
+    align-self: flex-start;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.8rem;
+}
+
+.course-card .course-title {
+    font-size: 1.2rem;
+    margin: 0;
+    color: #c9d1d9;
+    font-weight: 600;
+}
+
+.course-card .course-description {
+    color: #8b949e;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.course-card .course-stats {
+    display: flex;
+    gap: 1rem;
+    color: #8b949e;
+    font-size: 0.8rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid #30363d;
+}
+
+/* View Course Styles */
+.course-container {
+    margin-top: 80px;
+    padding: 2rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.course-header {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.course-title {
+    font-size: 2rem;
+    color: #c9d1d9;
+    margin: 1rem 0;
+}
+
+.course-meta {
+    color: #8b949e;
+    font-size: 0.9rem;
+    display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.course-content {
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 2rem;
+}
+
+.course-description {
+    color: #c9d1d9;
+    line-height: 1.6;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1001;
+}
+
+.modal-content {
+    background-color: #0d1117;
+    margin: 5% auto;
+    padding: 2rem;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 800px;
+}
+
+/* Quill Editor Styles */
+#editor {
+    height: 300px;
+    margin-bottom: 1rem;
+    background-color: #161b22;
+    border-radius: 6px;
+}
+
+.ql-toolbar {
+    background-color: #21262d;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-color: #30363d !important;
+}
+
+.ql-container {
+    border-color: #30363d !important;
+}
+
+/* Button Styles */
+.enroll-button {
+    background-color: #238636;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+.enroll-button:hover {
+    background-color: #2ea043;
+}
+
+.enroll-button.enrolled {
+    background-color: #21262d;
+    cursor: not-allowed;
+}
+
+/* Moderator Controls */
+.mod-controls {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.edit-btn, .delete-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    border: none;
+    transition: all 0.2s;
+}
+
+.edit-btn {
+    background-color: #238636;
+    color: white;
+}
+
+.delete-btn {
+    background-color: transparent;
+    color: #f85149;
+    border: 1px solid #f85149;
+}
+
+/* Responsive Video Embeds */
+.course-description iframe,
+.ql-editor iframe {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 1rem auto;
+    display: block;
+}
+
+/* Resizable iframe styles */
+.resizable-iframe {
+    position: relative;
+    display: inline-block;
+    margin: 1em auto;
+}
+
+.resize-handle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #58a6ff;
+    border-radius: 50%;
+    z-index: 100;
+}
+
+.resize-handle.se {
+    bottom: -5px;
+    right: -5px;
+    cursor: se-resize;
+}
+
+.resize-handle:hover {
+    background-color: #1f6feb;
+}
+
+/* Headers */
+h1 {
+    color: #c9d1d9;
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+/* Create Course Form Styles */
+#createCourseForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#createCourseForm select,
+#createCourseForm input {
+    padding: 0.8rem;
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #c9d1d9;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+}
+
+#createCourseForm select:focus,
+#createCourseForm input:focus {
+    outline: none;
+    border-color: #58a6ff;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.submit-btn {
+    background-color: #238636;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.submit-btn:hover {
+    background-color: #2ea043;
+}
+
+.cancel-btn {
+    background-color: transparent;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.cancel-btn:hover {
+    background-color: #21262d;
+}
+
+/* Quill Editor Dark Theme Overrides */
+#createCourseForm .ql-editor {
+    min-height: 200px;
+    color: #c9d1d9;
+}
+
+#createCourseForm .ql-toolbar button {
+    color: #c9d1d9 !important;
+}
+
+#createCourseForm .ql-toolbar button:hover {
+    color: #58a6ff !important;
+}
+
+#createCourseForm .ql-toolbar .ql-stroke {
+    stroke: #c9d1d9 !important;
+}
+
+#createCourseForm .ql-toolbar .ql-fill {
+    fill: #c9d1d9 !important;
+}
+
+#createCourseForm .ql-toolbar button:hover .ql-stroke {
+    stroke: #58a6ff !important;
+}
+
+#createCourseForm .ql-toolbar button:hover .ql-fill {
+    fill: #58a6ff !important;
+}
+
+#createCourseForm .ql-picker-label {
+    color: #c9d1d9 !important;
+}
+
+#createCourseForm .ql-picker-options {
+    background-color: #161b22 !important;
+    border-color: #30363d !important;
+}
+
+#createCourseForm .ql-picker-item {
+    color: #c9d1d9 !important;
+}
+
+#createCourseForm .ql-picker-item:hover {
+    color: #58a6ff !important;
+}

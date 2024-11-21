@@ -92,6 +92,24 @@ function loadComments(post) {
     commentsList.innerHTML = '';
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
+    if (!window.commentQuill) {
+        window.commentQuill = new Quill('#commentEditor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline', 'strike'],
+                    ['blockquote', 'code-block'],
+                    [{ 'header': 1 }, { 'header': 2 }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'script': 'sub'}, { 'script': 'super' }],
+                    ['link', 'image', 'video'],
+                    ['clean']
+                ]
+            },
+            placeholder: 'Write your comment here...'
+        });
+    }
+
     if (post.comments && post.comments.length > 0) {
         const sortedComments = [...post.comments].sort((a, b) => 
             new Date(b.timestamp) - new Date(a.timestamp)
@@ -160,9 +178,9 @@ function addComment(event) {
     event.preventDefault();
     
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const content = document.getElementById('commentText').value.trim();
+    const content = window.commentQuill.root.innerHTML.trim();
     
-    if (!content) return;
+    if (!content || content === '<p><br></p>') return;
 
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('id');
@@ -177,9 +195,9 @@ function addComment(event) {
             author: {
                 username: currentUser.username,
                 role: currentUser.role,
-                name: currentUser.name
+                name: currentUser.name || currentUser.username
             },
-            authorName: currentUser.name,
+            authorName: currentUser.name || currentUser.username,
             timestamp: new Date().toISOString()
         };
         
@@ -190,7 +208,7 @@ function addComment(event) {
         posts[postIndex].comments.push(newComment);
         localStorage.setItem('forumPosts', JSON.stringify(posts));
         
-        document.getElementById('commentForm').reset();
+        window.commentQuill.setContents([]);
         
         loadPost();
     }
